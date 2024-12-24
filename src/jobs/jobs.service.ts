@@ -1,24 +1,32 @@
-import { Injectable, Scope } from '@nestjs/common';
-import { JobDTO } from './job.dto';
+import { Injectable } from '@nestjs/common';
+import { JobDTO, JobStatus } from './job.dto';
 
 export abstract class BaseJobService {
   abstract addJob(job: JobDTO): boolean;
   abstract getJobs(): JobDTO[];
-  abstract getJob(id: string): JobDTO;
+  abstract getJob(id: number): JobDTO;
   abstract updateJob(job: JobDTO): boolean;
   abstract deleteJob(id: string): boolean;
 }
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class JobService implements BaseJobService {
-  addJob(_job: JobDTO): boolean {
+  addJob(job: JobDTO): boolean {
     throw new Error('Method not implemented.');
   }
   getJobs(): JobDTO[] {
     throw new Error('Method not implemented.');
   }
-  getJob(_id: string): JobDTO {
-    throw new Error('Method not implemented.');
+  getJob(id: number): JobDTO {
+    return new JobDTO(
+      id,
+      'Software Developer',
+      'Develop software',
+      'Hyderabad',
+      'Full-time',
+      new Date(),
+      JobStatus.APPLIED,
+    );
   }
   updateJob(_job: JobDTO): boolean {
     throw new Error('Method not implemented.');

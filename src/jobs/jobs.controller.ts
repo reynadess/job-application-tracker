@@ -1,4 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { JobDTO } from './job.dto';
 import { BaseJobService } from './jobs.service';
 
 @Controller('jobs')
@@ -11,7 +12,7 @@ export class JobsController {
   }
 
   @Get(':id')
-  getJob(@Param('id') id: any): string {
-    return `A job with ${id}`;
+  getJob(@Param('id') id: number): JobDTO {
+    return this.jobsService.getJob(id);
   }
 }

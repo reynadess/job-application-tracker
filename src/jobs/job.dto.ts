@@ -1,5 +1,5 @@
 export class JobDTO {
-  id: string;
+  id: number;
   title: string;
   company: string;
   location: string;
@@ -8,7 +8,7 @@ export class JobDTO {
   status: JobStatus;
 
   constructor(
-    id: string,
+    id: number,
     title: string,
     company: string,
     location: string,
