@@ -4,8 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
+import { User } from 'src/users/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 export abstract class BaseAuthService {
   abstract validateUser(
@@ -19,7 +19,7 @@ export abstract class BaseAuthService {
 @Injectable()
 export class JwtAuthService implements BaseAuthService {
   constructor(
-    private usersService: UserService,
+    private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
@@ -52,7 +52,7 @@ export class JwtAuthService implements BaseAuthService {
     };
   }
 
-  async register(User: User): Promise<Boolean> {
-    return this.usersService.createOne(User);
+  async register(User: User): Promise<void> {
+    this.usersService.createOne(User);
   }
 }

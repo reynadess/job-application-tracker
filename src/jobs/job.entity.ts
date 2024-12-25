@@ -6,29 +6,32 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
-export class User {
+@Entity('jobs')
+export class Job {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  username: string;
+  title: string;
 
   @Column()
-  firstName: string;
+  company: string;
 
   @Column()
-  lastName: string;
+  location: string;
 
   @Column()
-  email: string;
+  description: string;
 
   @Column()
-  password: string;
+  status: string;
+
+  @Column({ type: 'date' })
+  appliedDate: Date;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  createdDate: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedDate: Date;
 }

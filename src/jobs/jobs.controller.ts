@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { JobDTO } from './job.dto';
+import { Job } from './job.entity';
 import { BaseJobService } from './jobs.service';
 
 @Controller('jobs')
@@ -12,7 +12,7 @@ export class JobsController {
   }
 
   @Get(':id')
-  getJob(@Param('id') id: number): JobDTO {
+  async getJob(@Param('id') id: number): Promise<Job> {
     return this.jobsService.getJob(id);
   }
 }
