@@ -4,8 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/users/user.entity';
-import { UsersService } from 'src/users/users.service';
+import { Applicant } from 'src/applicants/applicant.entity';
+import { ApplicantsService } from 'src/applicants/applicants.service';
 
 export abstract class BaseAuthService {
   abstract validateUser(
@@ -13,13 +13,13 @@ export abstract class BaseAuthService {
     password: string,
   ): Promise<{ username: string; userId: number }>;
   abstract login(username: string, userId: number): Promise<any>;
-  abstract register(User: User): Promise<any>;
+  abstract register(User: Applicant): Promise<any>;
 }
 
 @Injectable()
 export class JwtAuthService implements BaseAuthService {
   constructor(
-    private usersService: UsersService,
+    private usersService: ApplicantsService,
     private jwtService: JwtService,
   ) {}
 
@@ -28,7 +28,8 @@ export class JwtAuthService implements BaseAuthService {
     password: string,
   ): Promise<{ username: string; userId: number } | undefined> {
     try {
-      const user: User | undefined = await this.usersService.findOne(username);
+      const user: Applicant | undefined =
+        await this.usersService.findOne(username);
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
@@ -52,7 +53,7 @@ export class JwtAuthService implements BaseAuthService {
     };
   }
 
-  async register(User: User): Promise<void> {
+  async register(User: Applicant): Promise<void> {
     this.usersService.createOne(User);
   }
 }

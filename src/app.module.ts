@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApplicantsModule } from './applicants/applicants.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { JobsModule } from './jobs/jobs.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     JobsModule,
     AuthModule,
-    UsersModule,
+    ApplicantsModule,
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -25,7 +25,6 @@ import { UsersModule } from './users/users.module';
           'JobApplicationTracker',
         ),
         autoLoadEntities: true,
-        synchronize: true,
       }),
       inject: [ConfigService],
     }),
