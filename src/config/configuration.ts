@@ -1,3 +1,8 @@
+import * as dotenv from 'dotenv';
+dotenv.config({
+  path: `.env.${process.env.NODE_ENV || 'development'}`,
+});
+
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   database: {
