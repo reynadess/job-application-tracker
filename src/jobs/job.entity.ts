@@ -12,22 +12,46 @@ export class Job {
   id: number;
 
   @Column()
-  title: string;
+  role: string;
 
   @Column()
   company: string;
 
   @Column()
-  location: string;
+  status: string;
+
+  @Column()
+  CTCOffered: number;
+
+  @Column()
+  link: string;
+
+  @Column({ type: 'date' })
+  appliedDate: Date;
+
+  @Column()
+  city: string;
+
+  @Column()
+  comments: string;
+
+  @Column()
+  recruiterName: string;
+
+  @Column()
+  recruiterContact: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  country: string;
 
   @Column()
   description: string;
 
   @Column()
-  status: string;
-
-  @Column({ type: 'date' })
-  appliedDate: Date;
+  qualifications: string;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdDate: Date;
