@@ -10,6 +10,7 @@ CREATE TABLE public.jobs (
     "companyId" BIGINT,
 	company text NOT NULL,
     ctcOffered numeric,
+    "status" text,
     externalLink text,
     city text,
     "state" text,
