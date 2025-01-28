@@ -16,7 +16,8 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     container_name: postgres-job-application-tracker
@@ -24,12 +25,12 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - 5431:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./SQL/docker-seed.sql:/docker-entrypoint-initdb.d/docker-seed.sql
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', 'postgres']
       interval: 10s

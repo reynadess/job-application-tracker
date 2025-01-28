@@ -1,4 +1,4 @@
-CREATE TABLE applicantsJobs (
+CREATE TABLE public.applicantsJobs (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     userId BIGINT NOT NULL,
     jobId BIGINT NOT NULL,
