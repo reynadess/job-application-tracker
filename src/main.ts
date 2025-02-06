@@ -21,7 +21,6 @@ async function bootstrap() {
   logger.log(
     `Swagger UI available at http://localhost:${process.env.PORT ?? 3000}/swagger`,
   );
-  logger.log(process.env.DATABASE_PORT);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

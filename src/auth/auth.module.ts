@@ -24,7 +24,7 @@ import { LocalStrategy } from './local.strategy';
     JwtModule.register({
       global: true,
       secret: 'secretKey', // FIXME Update this
-      signOptions: { expiresIn: '60s' }, // TODO Increase later
+      signOptions: { expiresIn: '600s' }, // TODO Increase later
     }),
   ],
   exports: [],

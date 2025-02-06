@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ServiceUnavailableException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Applicant } from 'src/applicants/applicant.entity';
 import { ApplicantsService } from 'src/applicants/applicants.service';
@@ -27,20 +23,16 @@ export class JwtAuthService implements BaseAuthService {
     username: string,
     password: string,
   ): Promise<{ username: string; userId: number } | undefined> {
-    try {
-      const user: Applicant | undefined =
-        await this.usersService.findOne(username);
-      if (!user) {
-        throw new UnauthorizedException('User not found');
-      }
-      const isMatch: boolean = user.password === password; // TODO Hashing
-      if (!isMatch) {
-        throw new UnauthorizedException('Password does not match');
-      }
-      return { username: user.username, userId: user.id };
-    } catch (error) {
-      throw new ServiceUnavailableException(error);
+    const user: Applicant | undefined =
+      await this.usersService.findOne(username);
+    if (!user) {
+      throw new UnauthorizedException();
     }
+    const isMatch: boolean = user.password === password; // TODO Hashing
+    if (!isMatch) {
+      throw new UnauthorizedException();
+    }
+    return { username: user.username, userId: user.id };
   }
 
   async login(
