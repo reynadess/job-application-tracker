@@ -7,6 +7,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
+import {
+  CreateApplicantDto,
+  LoginApplicantDTO,
+} from 'src/applicants/applicant.dto';
 import { Applicant } from 'src/applicants/applicant.entity';
 import { LocalAuthGuard } from './auth.guard';
 import { BaseAuthService } from './auth.service';
@@ -20,15 +24,16 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiBody({ type: Applicant })
+  @ApiBody({ type: LoginApplicantDTO })
   async login(@Request() req) {
     this.logger.log(`Login request for User: ${req.user.username}`);
     return this.authService.login(req.User, req.userId);
   }
 
   @Post('register')
+  @ApiBody({ type: CreateApplicantDto })
   async register(@Body() user: Applicant) {
     this.logger.log(`Register request for User: ${user.username}`);
-    this.authService.register(user);
+    await this.authService.register(user);
   }
 }

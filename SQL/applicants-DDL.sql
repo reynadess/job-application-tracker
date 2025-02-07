@@ -7,7 +7,7 @@
 CREATE EXTENSION citext;
 CREATE DOMAIN domain_email AS citext
 CHECK(
-   VALUE ~ '^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$'
+   VALUE ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'
 );
 -- for valid samples
 SELECT 'some_email@gmail.com'::domain_email;

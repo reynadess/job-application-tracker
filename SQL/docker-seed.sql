@@ -31,7 +31,7 @@ CREATE TABLE public.jobs (
 CREATE EXTENSION citext;
 CREATE DOMAIN domain_email AS citext
 CHECK(
-   VALUE ~ '^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$'
+   VALUE ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'
 );
 
 CREATE TABLE public.applicants (
