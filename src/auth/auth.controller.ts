@@ -21,14 +21,14 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiBody({ type: Applicant })
-  async login(@Request() req) {
+  async login(@Request() req): Promise<{ access_token: string }> {
     this.logger.log(`Login request for User: ${req.user.username}`);
-    return this.authService.login(req.User, req.userId);
+    return await this.authService.login(req.user);
   }
 
   @Post('register')
   async register(@Body() user: Applicant) {
     this.logger.log(`Register request for User: ${user.username}`);
-    this.authService.register(user);
+    await this.authService.register(user);
   }
 }

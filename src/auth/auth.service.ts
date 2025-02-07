@@ -8,14 +8,17 @@ export abstract class BaseAuthService {
     username: string,
     password: string,
   ): Promise<{ username: string; userId: number }>;
-  abstract login(username: string, userId: number): Promise<any>;
+  abstract login(user: {
+    username: string;
+    userId: number;
+  }): Promise<{ access_token: string }>;
   abstract register(User: Applicant): Promise<any>;
 }
 
 @Injectable()
 export class JwtAuthService implements BaseAuthService {
   constructor(
-    private usersService: ApplicantsService,
+    private applicantsService: ApplicantsService,
     private jwtService: JwtService,
   ) {}
 
@@ -24,7 +27,7 @@ export class JwtAuthService implements BaseAuthService {
     password: string,
   ): Promise<{ username: string; userId: number } | undefined> {
     const user: Applicant | undefined =
-      await this.usersService.findOne(username);
+      await this.applicantsService.findOne(username);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -35,17 +38,16 @@ export class JwtAuthService implements BaseAuthService {
     return { username: user.username, userId: user.id };
   }
 
-  async login(
-    username: string,
-    userId: number,
-  ): Promise<{ access_token: string }> {
-    const payload = { username, sub: userId };
+  async login(user: {
+    username: string;
+    userId: number;
+  }): Promise<{ access_token: string }> {
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(user),
     };
   }
 
   async register(User: Applicant): Promise<void> {
-    this.usersService.createOne(User);
+    await this.applicantsService.createOne(User);
   }
 }

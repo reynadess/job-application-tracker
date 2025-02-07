@@ -18,8 +18,9 @@ export class ApplicantsService {
     });
   }
 
-  async createOne(user: Applicant): Promise<void> {
-    user = this.applicantsRepository.create(user);
-    await this.applicantsRepository.save(user);
+  async createOne(applicant: Applicant): Promise<Applicant> {
+    applicant = this.applicantsRepository.create(applicant);
+    applicant = await this.applicantsRepository.save(applicant);
+    return applicant;
   }
 }
