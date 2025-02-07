@@ -19,7 +19,7 @@ export abstract class BaseAuthService {
 @Injectable()
 export class JwtAuthService implements BaseAuthService {
   constructor(
-    private usersService: ApplicantsService,
+    private applicantsService: ApplicantsService,
     private jwtService: JwtService,
   ) {}
 
@@ -29,7 +29,7 @@ export class JwtAuthService implements BaseAuthService {
   ): Promise<{ username: string; userId: number } | undefined> {
     try {
       const user: Applicant | undefined =
-        await this.usersService.findOne(username);
+        await this.applicantsService.findOne(username);
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
@@ -54,6 +54,6 @@ export class JwtAuthService implements BaseAuthService {
   }
 
   async register(User: Applicant): Promise<void> {
-    this.usersService.createOne(User);
+    await this.applicantsService.createOne(User);
   }
 }
