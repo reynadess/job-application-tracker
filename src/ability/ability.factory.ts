@@ -16,7 +16,7 @@ export type AppAbility = MongoAbility<[Action, Subjects]>;
 @Injectable()
 export class AbilityFactory {
   defineAbility(applicant: Applicant) {
-    // Can define in JSON and store it database
+    // Can define in JSON and store it in database
     const abilityBuilder = new AbilityBuilder<AppAbility>(createMongoAbility);
     abilityBuilder.can(Action.Manage, Applicant, {
       username: applicant.username,
