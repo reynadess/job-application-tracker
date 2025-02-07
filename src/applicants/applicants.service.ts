@@ -13,8 +13,7 @@ export class ApplicantsService {
   ) {}
 
   async findOne(username: string): Promise<Applicant | undefined> {
-    return this.applicantsRepository.findOne({
-      select: ['id', 'username', 'password'],
+    return await this.applicantsRepository.findOne({
       where: { username },
     });
   }

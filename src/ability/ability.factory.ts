@@ -18,7 +18,9 @@ export class AbilityFactory {
   defineAbility(applicant: Applicant) {
     // Can define in JSON and store it database
     const abilityBuilder = new AbilityBuilder<AppAbility>(createMongoAbility);
-    abilityBuilder.can(Action.Manage, Applicant, { id: applicant.id }); // FIXME Change this that only the owner can manage the applicant's some fields.
+    abilityBuilder.can(Action.Manage, Applicant, {
+      username: applicant.username,
+    }); // FIXME Change this that only the owner can manage the applicant's some fields.
     return abilityBuilder.build({
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
