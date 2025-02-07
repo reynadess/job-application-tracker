@@ -5,6 +5,7 @@ import { ApplicantsModule } from './applicants/applicants.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { JobsModule } from './jobs/jobs.module';
+import { AbilityModule } from './ability/ability.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { JobsModule } from './jobs/jobs.module';
       }),
       inject: [ConfigService],
     }),
+    AbilityModule,
   ],
 })
 export class AppModule {}

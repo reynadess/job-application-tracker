@@ -7,8 +7,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true,
-      secretOrKey: 'secretKey', // FIXME Update this
+      secretOrKey: 'secretKey', // FIXME Update JWT Secret Key
     });
   }
 
