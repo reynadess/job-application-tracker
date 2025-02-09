@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CaslModule } from 'nest-casl';
+import { Roles } from './app.roles';
 import { ApplicantsModule } from './applicants/applicants.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
@@ -28,6 +30,7 @@ import { JobsModule } from './jobs/jobs.module';
       }),
       inject: [ConfigService],
     }),
+    CaslModule.forRoot<Roles>({}),
   ],
 })
 export class AppModule {}

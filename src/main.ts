@@ -6,8 +6,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.enableCors();
-  const logger = new Logger(AppModule.name);
+  app.enableCors(); // TODO Update this for production
+  const logger = new Logger('Main');
   // Swagger OpenAPI
   const options = new DocumentBuilder()
     .setTitle('Job Application Tracker API')
@@ -22,7 +22,6 @@ async function bootstrap() {
   logger.log(
     `Swagger UI available at http://localhost:${process.env.PORT ?? 3000}/swagger`,
   );
-  logger.log(process.env.DATABASE_PORT);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -23,8 +23,8 @@ import { LocalStrategy } from './local.strategy';
     PassportModule,
     JwtModule.register({
       global: true,
-      secret: 'secretKey', // FIXME Update this
-      signOptions: { expiresIn: '60s' }, // TODO Increase later
+      secret: 'secretKey', // FIXME Update JWT Secret Key
+      signOptions: { expiresIn: '600s' }, // TODO Increase later
     }),
   ],
   exports: [],

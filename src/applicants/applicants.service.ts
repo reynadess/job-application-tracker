@@ -13,14 +13,14 @@ export class ApplicantsService {
   ) {}
 
   async findOne(username: string): Promise<Applicant | undefined> {
-    return this.applicantsRepository.findOne({
-      select: ['id', 'username', 'password'],
+    return await this.applicantsRepository.findOne({
       where: { username },
     });
   }
 
-  async createOne(user: Applicant): Promise<void> {
-    user = this.applicantsRepository.create(user);
-    await this.applicantsRepository.save(user);
+  async createOne(applicant: Applicant): Promise<Applicant> {
+    applicant = this.applicantsRepository.create(applicant);
+    applicant = await this.applicantsRepository.save(applicant);
+    return applicant;
   }
 }

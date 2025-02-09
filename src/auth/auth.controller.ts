@@ -25,9 +25,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiBody({ type: LoginApplicantDTO })
-  async login(@Request() req) {
+  async login(@Request() req): Promise<{ access_token: string }> {
     this.logger.log(`Login request for User: ${req.user.username}`);
-    return this.authService.login(req.User, req.userId);
+    return await this.authService.login(req.user);
   }
 
   @Post('register')
