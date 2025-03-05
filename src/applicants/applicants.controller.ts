@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
-import { AbilityFactory } from 'src/ability/ability.factory';
 import { Applicant } from './applicant.entity';
 import { ApplicantHook } from './applicant.hook';
 import { ApplicantsService } from './applicants.service';
@@ -15,10 +14,7 @@ import { ApplicantsService } from './applicants.service';
 @Controller('applicants')
 @ApiBearerAuth()
 export class ApplicantsController {
-  constructor(
-    private readonly applicantsService: ApplicantsService,
-    private readonly abilityFactory: AbilityFactory,
-  ) {}
+  constructor(private readonly applicantsService: ApplicantsService) {}
 
   @Get(':username')
   @UseGuards(AccessGuard)
