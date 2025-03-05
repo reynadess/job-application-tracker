@@ -6,7 +6,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.enableCors(); // TODO Update this for production
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }); // TODO Update this for production
   const logger = new Logger('Main');
   // Swagger OpenAPI
   const options = new DocumentBuilder()
