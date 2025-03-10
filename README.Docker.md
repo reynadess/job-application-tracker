@@ -3,6 +3,15 @@
 When you're ready, start your application by running:
 `docker compose up --build`.
 
+`docker compose down` to remove docker images
+
+`docker compose stop` to stop the instances
+
+postgres instance can be accessed at http://localhost:5431
+
+Docker will create a docker volume to persist the DB data. if you ever want to remove the DB data, for example, when there is a table change.
+`docker compose down --volume`
+
 Your application will be available at http://localhost:3000.
 
 ### Deploying your application to the cloud
