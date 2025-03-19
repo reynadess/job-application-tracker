@@ -23,4 +23,14 @@ export class ApplicantsService {
     applicant = await this.applicantsRepository.save(applicant);
     return applicant;
   }
+  async updateOne(username: string, updateData: Partial<Applicant>): Promise<Applicant> {
+    const applicant = await this.applicantsRepository.findOne({
+      where: { username },
+    });
+    if (!applicant) {
+      throw new Error(`Applicant with username ${username} not found`);
+    }
+    Object.assign(applicant, updateData);
+    return await this.applicantsRepository.save(applicant);
+  }
 }
