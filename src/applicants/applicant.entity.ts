@@ -1,13 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuditEntity } from '../common/entities/audit.entity';
 
 @Entity('applicants')
-export class Applicant {
+export class Applicant extends AuditEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,10 +20,4 @@ export class Applicant {
 
   @Column()
   password: string;
-
-  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
 }

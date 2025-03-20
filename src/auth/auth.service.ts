@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CreateApplicantDto } from 'src/applicants/applicant.dto';
 import { Applicant } from 'src/applicants/applicant.entity';
 import { ApplicantsService } from 'src/applicants/applicants.service';
 
@@ -9,7 +10,7 @@ export type Payload = { username: string; sub: number; id: number };
 export abstract class BaseAuthService {
   abstract validateUser(username: string, password: string): Promise<User>;
   abstract login(user: User): Promise<{ access_token: string }>;
-  abstract register(User: Applicant): Promise<any>;
+  abstract register(User: CreateApplicantDto): Promise<void>;
 }
 
 @Injectable()
@@ -45,7 +46,7 @@ export class JwtAuthService implements BaseAuthService {
     };
   }
 
-  async register(User: Applicant): Promise<void> {
+  async register(User: CreateApplicantDto): Promise<void> {
     await this.applicantsService.createOne(User);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateApplicantDto } from './applicant.dto';
 import { Applicant } from './applicant.entity';
 
 @Injectable()
@@ -18,9 +19,9 @@ export class ApplicantsService {
     });
   }
 
-  async createOne(applicant: Applicant): Promise<Applicant> {
-    applicant = this.applicantsRepository.create(applicant);
-    applicant = await this.applicantsRepository.save(applicant);
-    return applicant;
+  async createOne(createApplicantDto: CreateApplicantDto): Promise<void> {
+    const applicant: Applicant =
+      this.applicantsRepository.create(createApplicantDto);
+    await this.applicantsRepository.save(applicant);
   }
 }

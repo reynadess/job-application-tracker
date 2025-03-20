@@ -11,7 +11,6 @@ import {
   CreateApplicantDto,
   LoginApplicantDTO,
 } from 'src/applicants/applicant.dto';
-import { Applicant } from 'src/applicants/applicant.entity';
 import { LocalAuthGuard } from './auth.guard';
 import { BaseAuthService } from './auth.service';
 import { Public } from './public.decorator';
@@ -32,8 +31,8 @@ export class AuthController {
 
   @Post('register')
   @ApiBody({ type: CreateApplicantDto })
-  async register(@Body() user: Applicant) {
-    this.logger.log(`Register request for User: ${user.username}`);
-    await this.authService.register(user);
+  async register(@Body() applicant: CreateApplicantDto) {
+    this.logger.log(`Register request for User: ${applicant.username}`);
+    await this.authService.register(applicant);
   }
 }
