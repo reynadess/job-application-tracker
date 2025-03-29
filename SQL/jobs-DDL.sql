@@ -17,9 +17,6 @@ CREATE TABLE public.jobs (
     "country" text,
 	"description" text,
     "recruiterId" text,
-    "recruiterEmail" text,
-    "recruiterPhone" text,
-    "createdBy" text NOT NULL, -- userId of the person who created the job
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );

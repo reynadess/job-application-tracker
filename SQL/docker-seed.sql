@@ -46,7 +46,7 @@ CREATE TABLE public.applicants (
 );
 
 -- Create the applicantsJobs table
-CREATE TABLE public.applicantsJobs (
+CREATE TABLE public.applications (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     userId BIGINT NOT NULL,
     jobId BIGINT NOT NULL,
