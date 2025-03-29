@@ -1,5 +1,6 @@
 import { AuditEntity } from 'src/common/entity/audit.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ApplicationStatus } from '../application-status.enum';
 
 @Entity('applications')
 export class Application extends AuditEntity {
@@ -9,8 +10,13 @@ export class Application extends AuditEntity {
   @Column({ nullable: false })
   status: string;
 
-  @Column({ nullable: false })
-  userId: number;
+  @Column({
+    type: 'enum',
+    enum: ApplicationStatus,
+    default: ApplicationStatus.Apply,
+    nullable: false,
+  })
+  userId: ApplicationStatus;
 
   @Column({ nullable: false })
   jobId: number;

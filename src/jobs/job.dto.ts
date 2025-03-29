@@ -1,3 +1,5 @@
+import { JobStatus } from './job-status.enum';
+
 export class JobDTO {
   id: number;
   title: string;
@@ -24,11 +26,4 @@ export class JobDTO {
     this.datePosted = datePosted;
     this.status = status;
   }
-}
-
-export enum JobStatus {
-  APPLIED = 'applied',
-  INTERVIEW = 'interview',
-  OFFER = 'offer',
-  REJECTED = 'rejected',
 }

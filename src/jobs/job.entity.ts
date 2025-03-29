@@ -1,5 +1,6 @@
 import { AuditEntity } from 'src/common/entity/audit.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { JobStatus } from './job-status.enum';
 
 @Entity('jobs')
 export class Job extends AuditEntity {
@@ -18,7 +19,12 @@ export class Job extends AuditEntity {
   @Column()
   ctcOffered: number;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: JobStatus,
+    default: JobStatus.Open,
+    nullable: false,
+  })
   status: string;
 
   @Column()
