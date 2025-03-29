@@ -11,7 +11,7 @@ CREATE TABLE public.jobs (
 	company text NOT NULL,
     ctcOffered numeric,
     "status" text,
-    externalLink text,
+    jobLink text,
     city text,
     "state" text,
     "country" text,
@@ -19,7 +19,7 @@ CREATE TABLE public.jobs (
     "recruiterId" text,
     "recruiterEmail" text,
     "recruiterPhone" text,
-    "createdBy" text NOT NULL,
+    "createdBy" text NOT NULL, -- userId of the person who created the job
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );

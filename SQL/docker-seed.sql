@@ -8,23 +8,23 @@ BEGIN;
 
 -- Create the jobs table
 CREATE TABLE public.jobs (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "role" text NOT NULL,
+	id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	"role" text NOT NULL,
     "companyId" BIGINT,
-    company text NOT NULL,
+	company text NOT NULL,
     ctcOffered numeric,
     "status" text,
-    externalLink text,
+    jobLink text,
     city text,
     "state" text,
     "country" text,
-    "description" text,
+	"description" text,
     "recruiterId" text,
     "recruiterEmail" text,
     "recruiterPhone" text,
-    "createdBy" text NOT NULL,
-    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "createdBy" text NOT NULL, -- userId of the person who created the job
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
 -- Create the applicants table
@@ -52,7 +52,6 @@ CREATE TABLE public.applicantsJobs (
     jobId BIGINT NOT NULL,
     appliedDate timestamp with time zone,
     "status" TEXT,
-    "notes" TEXT,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
     "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
