@@ -1,5 +1,5 @@
-import { AuditEntity } from 'src/common/entity/audit.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuditEntity } from '../common/entity/audit.entity';
 import { JobStatus } from './job-status.enum';
 
 @Entity('jobs')
@@ -29,9 +29,6 @@ export class Job extends AuditEntity {
 
   @Column()
   jobLink: string;
-
-  @Column({ type: 'date' })
-  appliedDate: Date;
 
   @Column()
   city: string;

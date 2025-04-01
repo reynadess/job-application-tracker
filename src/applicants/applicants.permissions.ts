@@ -1,7 +1,7 @@
 import { Actions, InferSubjects, Permissions } from 'nest-casl';
-import { Roles } from 'src/app.roles';
-import { Job } from 'src/jobs/job.entity';
-import { Recruiter } from 'src/recruiters/recruiter.entity';
+import { Roles } from '../app.roles';
+import { Job } from '../jobs/job.entity';
+import { Recruiter } from '../recruiters/recruiter.entity';
 import { Applicant } from './applicant.entity';
 
 export type Subjects =

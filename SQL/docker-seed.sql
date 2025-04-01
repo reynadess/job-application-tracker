@@ -12,17 +12,14 @@ CREATE TABLE public.jobs (
 	"role" text NOT NULL,
     "companyId" BIGINT,
 	company text NOT NULL,
-    ctcOffered numeric,
+    "ctcOffered" numeric,
     "status" text,
-    jobLink text,
+    "jobLink" text,
     city text,
     "state" text,
     "country" text,
 	"description" text,
     "recruiterId" text,
-    "recruiterEmail" text,
-    "recruiterPhone" text,
-    "createdBy" text NOT NULL, -- userId of the person who created the job
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -48,10 +45,10 @@ CREATE TABLE public.applicants (
 -- Create the applicantsJobs table
 CREATE TABLE public.applications (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    userId BIGINT NOT NULL,
-    jobId BIGINT NOT NULL,
-    appliedDate timestamp with time zone,
-    "status" TEXT,
+    "userId" BIGINT NOT NULL,
+    "jobId" BIGINT NOT NULL,
+    "appliedDate" timestamp with time zone,
+    "status" TEXT NOT NULL,,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
     "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );

@@ -1,23 +1,23 @@
-import { AuditEntity } from 'src/common/entity/audit.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuditEntity } from '../common/entity/audit.entity';
 
 @Entity('applicants')
 export class Applicant extends AuditEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    username: string;
+  @Column()
+  username: string;
 
-    @Column()
-    firstName: string;
+  @Column()
+  firstName: string;
 
-    @Column()
-    lastName: string;
+  @Column()
+  lastName: string;
 
-    @Column()
-    email: string;
+  @Column()
+  email: string;
 
-    @Column()
-    password: string;
+  @Column()
+  password: string;
 }
