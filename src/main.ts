@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -10,6 +10,9 @@ async function bootstrap() {
     origin: 'http://localhost:5173',
     credentials: true,
   }); // TODO Update this for production
+
+  //validation pipes globally
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
   const logger = new Logger('Main');
   // Swagger OpenAPI
   const options = new DocumentBuilder()

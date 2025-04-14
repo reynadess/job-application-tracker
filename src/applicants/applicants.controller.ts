@@ -13,7 +13,7 @@ import { AccessGuard, Actions, UseAbility } from 'nest-casl';
 import { Applicant } from './applicant.entity';
 import { ApplicantHook } from './applicant.hook';
 import { ApplicantsService } from './applicants.service';
-import { UpdateApplicantDto } from './updateApplicant.dto';
+import { UpdateApplicantDto } from './applicant.dto';
 @Controller('applicants')
 @ApiBearerAuth()
 export class ApplicantsController {
@@ -33,38 +33,19 @@ export class ApplicantsController {
     }
     return applicant;
   }
-
+  
   @Patch(':username')
+  @UseGuards(AccessGuard)
+  @UseAbility(Actions.read, Applicant, ApplicantHook)
   async updateApplicant(
     @Param('username') username: string,
     @Body() updateData: UpdateApplicantDto,
   ): Promise<Applicant> {
-    const applicant = await this.applicantsService.findOne(username);
-    
-    if (!applicant) {
-      throw new NotFoundException(
-        `Applicant with username ${username} not found`,
-      );
-    }
-    if (updateData.hasOwnProperty('username')) {
-      throw new ForbiddenException('Updating username is not allowed');
-    }
-
-    if (updateData.firstName) {
-      applicant.firstName = updateData.firstName;
-    }
-    if (updateData.lastName) {
-      applicant.lastName = updateData.lastName;
-    }
-    
-    if (updateData.email) {
-      applicant.email = updateData.email;
-    }
-
-    const updatedApplicant = await this.applicantsService.updateOne(
-      username,
-      updateData,
-    );
-    return updatedApplicant;
+      const updatedApplicant  =  await this.applicantsService.updateOne(username, updateData);
+      if(!updatedApplicant ){
+        throw new NotFoundException(`Aplicant with username ${username} not found or update failed`);
+      }
+      return updatedApplicant ;
+    } 
   }
-}
+
