@@ -2,8 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from 'nest-casl';
+import { AppController } from './app.controller';
 import { Roles } from './app.roles';
+import { AppService } from './app.service';
 import { ApplicantsModule } from './applicants/applicants.module';
+import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { JobsModule } from './jobs/jobs.module';
@@ -31,6 +34,9 @@ import { JobsModule } from './jobs/jobs.module';
       inject: [ConfigService],
     }),
     CaslModule.forRoot<Roles>({}),
+    ApplicationsModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

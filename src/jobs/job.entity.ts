@@ -1,45 +1,37 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AuditEntity } from '../common/entity/audit.entity';
+import { JobStatus } from './job-status.enum';
 
 @Entity('jobs')
-export class Job {
+export class Job extends AuditEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   role: string;
+
+  @Column()
+  companyId: number;
 
   @Column()
   company: string;
 
   @Column()
+  ctcOffered: number;
+
+  @Column({
+    type: 'enum',
+    enum: JobStatus,
+    default: JobStatus.Open,
+    nullable: false,
+  })
   status: string;
 
   @Column()
-  CTCOffered: number;
-
-  @Column()
-  link: string;
-
-  @Column({ type: 'date' })
-  appliedDate: Date;
+  jobLink: string;
 
   @Column()
   city: string;
-
-  @Column()
-  comments: string;
-
-  @Column()
-  recruiterName: string;
-
-  @Column()
-  recruiterContact: string;
 
   @Column()
   state: string;
@@ -51,11 +43,5 @@ export class Job {
   description: string;
 
   @Column()
-  qualifications: string;
-
-  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdDate: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedDate: Date;
+  recruiterId: number;
 }

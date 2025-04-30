@@ -10,8 +10,8 @@ import { ApiBody } from '@nestjs/swagger';
 import {
   CreateApplicantDto,
   LoginApplicantDTO,
-} from 'src/applicants/applicant.dto';
-import { Applicant } from 'src/applicants/applicant.entity';
+} from '../applicants/applicant.dto';
+import { Applicant } from '../applicants/applicant.entity';
 import { LocalAuthGuard } from './auth.guard';
 import { BaseAuthService } from './auth.service';
 import { Public } from './public.decorator';
