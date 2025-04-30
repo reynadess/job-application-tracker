@@ -1,5 +1,5 @@
 CREATE TABLE public.applications (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "userId" BIGINT NOT NULL,
     "jobId" BIGINT NOT NULL,
     "appliedDate" timestamp with time zone,

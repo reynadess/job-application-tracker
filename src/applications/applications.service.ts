@@ -35,13 +35,12 @@ export class ApplicationsService {
     await queryRunner.startTransaction();
     try {
       job = await queryRunner.manager.save(job);
-      this.logger.debug('Job created successfully', job.companyId);
+      this.logger.debug(`Job created successfully: ${job.company}`);
       applicationEntity.jobId = job.id;
       applicationEntity.userId = userId;
       applicationEntity = await queryRunner.manager.save(applicationEntity);
       this.logger.debug(
-        'Application created successfully',
-        applicationEntity.userId,
+        `Application created successfully for Application ID: ${applicationEntity.id} for Company ${job.company}`,
       );
       await queryRunner.commitTransaction();
     } catch (error) {

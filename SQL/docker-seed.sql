@@ -8,14 +8,14 @@ BEGIN;
 
 -- Create the jobs table
 CREATE TABLE public.jobs (
-	id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	"id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	"role" text NOT NULL,
     "companyId" BIGINT,
-	company text NOT NULL,
+	"company" text NOT NULL,
     "ctcOffered" numeric,
     "status" text,
     "jobLink" text,
-    city text,
+    "city" text,
     "state" text,
     "country" text,
 	"description" text,
@@ -32,8 +32,8 @@ CHECK(
 );
 
 CREATE TABLE public.applicants (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username text,
+    "id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "username" text,
     "firstName" text NOT NULL,
     "lastName" text NOT NULL,
     "email" domain_email UNIQUE NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE public.applicants (
 
 -- Create the applicantsJobs table
 CREATE TABLE public.applications (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "userId" BIGINT NOT NULL,
     "jobId" BIGINT NOT NULL,
     "appliedDate" timestamp with time zone,

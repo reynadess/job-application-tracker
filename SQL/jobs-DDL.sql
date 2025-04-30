@@ -5,14 +5,14 @@
 -- DROP TABLE public.jobs;
 
 CREATE TABLE public.jobs (
-	id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	"id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	"role" text NOT NULL,
     "companyId" BIGINT,
-	company text NOT NULL,
+	"company" text NOT NULL,
     "ctcOffered" numeric,
     "status" text,
     "jobLink" text,
-    city text,
+    "city" text,
     "state" text,
     "country" text,
 	"description" text,
