@@ -8,8 +8,9 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
+  // TODO reynadess Guards for this route
   @Post()
   async create(@Req() req, @Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationsService.create(createApplicationDto, req.user.id);
+    this.applicationsService.create(createApplicationDto, req.user.id);
   }
 }
