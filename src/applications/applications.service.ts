@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { DataSource, Repository } from 'typeorm';
@@ -22,6 +22,22 @@ export class ApplicationsService {
 
   async getApplicationById(id: number, userId: number) {
     return 'Get application by id';
+  }
+
+  async findOne(id: number, userId: number): Promise<Application | undefined> {
+    const application: Application = await this.applicationsReposirtory.findOne(
+      {
+        where: { id, userId },
+      },
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application with ID ${id} not found for user ID ${userId}`,
+      );
+    }
+
+    // TODO reynadess: Return DTO instead of entity, there should be one method that returns entity
+    return application;
   }
 
   async create(
