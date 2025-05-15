@@ -10,9 +10,6 @@ export class ApplicationHook
   constructor(private readonly applicationService: ApplicationsService) {}
 
   async run(req: Request): Promise<Application | undefined> {
-    return await this.applicationService.findOne(
-      Number(req.params.id),
-      Number(req.user.id),
-    );
+    return await this.applicationService.getApplication(Number(req.params.id));
   }
 }

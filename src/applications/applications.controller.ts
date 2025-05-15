@@ -26,15 +26,10 @@ export class ApplicationsController {
     this.applicationsService.create(createApplicationDto, req.user.id);
   }
 
-  // TODO reynadess: Return the DTO instead of the entity, the whole job application
   @UseGuards(AccessGuard)
   @UseAbility(Actions.read, Application, ApplicationHook)
   @Get(':id')
   async getApplicationById(@Req() req, @Param('id') id: number) {
-    const application: Application = await this.applicationsService.findOne(
-      id,
-      req.user.id,
-    );
-    return application;
+    return await this.applicationsService.findOne(id, req.user.id);
   }
 }
