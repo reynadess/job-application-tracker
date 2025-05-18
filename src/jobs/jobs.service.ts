@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { JobDTO } from './job.dto';
 import { Job } from './job.entity';
 
@@ -14,8 +14,9 @@ export class JobService {
   addJob(job: JobDTO): boolean {
     throw new Error('Method not implemented.');
   }
-  getJobs(): JobDTO[] {
-    throw new Error('Method not implemented.');
+  async getJobs(jobIds: number[]): Promise<Job[] | undefined> {
+    const jobs: Job[] = await this.jobRepository.findBy({ id: In(jobIds) });
+    return jobs;
   }
   async getJob(id: number): Promise<Job | undefined> {
     const job: Job = await this.jobRepository.findOne({ where: { id: id } });

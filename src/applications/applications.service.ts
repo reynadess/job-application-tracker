@@ -22,8 +22,33 @@ export class ApplicationsService {
 
   private readonly logger = new Logger(ApplicationsService.name);
 
-  async getAllApplications(userId: number) {
-    return 'Get all applications';
+  async getAllApplications(
+    userId: number,
+    skip = 0,
+    take = 100,
+  ): Promise<undefined | ReturnApplicationDto[]> {
+    const applications: Application[] = await this.applicationsReposirtory.find(
+      {
+        where: { userId },
+        skip: skip,
+        take: take,
+        order: {
+          updatedAt: 'DESC',
+        },
+      },
+    );
+    const jobIds: number[] = applications.map(
+      (application) => application.jobId,
+    );
+    const jobs: Job[] = await this.jobService.getJobs(jobIds);
+    let returnApplications: ReturnApplicationDto[] = [];
+    for (const application of applications) {
+      const job: Job = jobs.find((job) => job.id === application.jobId);
+      if (job) {
+        returnApplications.push(new ReturnApplicationDto(application, job));
+      }
+    }
+    return returnApplications;
   }
 
   async getApplication(id: number): Promise<Application | undefined> {

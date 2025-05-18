@@ -11,7 +11,10 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
 import { ApplicationHook } from './application.hook';
 import { ApplicationsService } from './applications.service';
-import { CreateApplicationDto } from './dto/create-application.dto';
+import {
+  CreateApplicationDto,
+  ReturnApplicationDto,
+} from './dto/create-application.dto';
 import { Application } from './entities/application.entity';
 
 @Controller('applications')
@@ -31,5 +34,12 @@ export class ApplicationsController {
   @Get(':id')
   async getApplicationById(@Req() req, @Param('id') id: number) {
     return await this.applicationsService.findOne(id, req.user.id);
+  }
+
+  @UseGuards(AccessGuard)
+  @UseAbility(Actions.read, Application)
+  @Get()
+  async getAllApplications(@Req() req): Promise<ReturnApplicationDto[]> {
+    return await this.applicationsService.getAllApplications(req.user.id);
   }
 }
