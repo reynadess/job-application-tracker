@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Applicant } from 'src/applicants/applicant.entity';
-import { ApplicantsService } from 'src/applicants/applicants.service';
+import { Applicant } from '../applicants/applicant.entity';
+import { ApplicantsService } from '../applicants/applicants.service';
 
 export type User = { username: string; userId: number };
 export type Payload = { username: string; sub: number; id: number };

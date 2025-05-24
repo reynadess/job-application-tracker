@@ -1,19 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { JobDTO } from './job.dto';
 import { Job } from './job.entity';
 
-export abstract class BaseJobService {
-  abstract addJob(job: JobDTO): boolean;
-  abstract getJobs(): JobDTO[];
-  abstract getJob(id: number): Promise<Job>;
-  abstract updateJob(job: JobDTO): boolean;
-  abstract deleteJob(id: string): boolean;
-}
-
 @Injectable()
-export class JobService implements BaseJobService {
+export class JobService {
   private readonly logger = new Logger(JobService.name);
   constructor(
     @InjectRepository(Job) private readonly jobRepository: Repository<Job>,
@@ -22,11 +14,16 @@ export class JobService implements BaseJobService {
   addJob(job: JobDTO): boolean {
     throw new Error('Method not implemented.');
   }
-  getJobs(): JobDTO[] {
-    throw new Error('Method not implemented.');
+  async getJobs(jobIds: number[]): Promise<Job[] | undefined> {
+    const jobs: Job[] = await this.jobRepository.findBy({ id: In(jobIds) });
+    return jobs;
   }
-  async getJob(id: number): Promise<Job> {
-    return this.jobRepository.findOne({ where: { id: id } });
+  async getJob(id: number): Promise<Job | undefined> {
+    const job: Job = await this.jobRepository.findOne({ where: { id: id } });
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+    return job;
   }
   updateJob(_job: JobDTO): boolean {
     throw new Error('Method not implemented.');
