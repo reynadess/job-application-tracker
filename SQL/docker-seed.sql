@@ -21,7 +21,8 @@ CREATE TABLE public.jobs (
 	"description" text,
     "recruiterId" text,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "deletedAt" timestamp with time zone DEFAULT NULL
 );
 
 -- Create the applicants table
@@ -39,7 +40,8 @@ CREATE TABLE public.applicants (
     "email" domain_email UNIQUE NOT NULL,
     "password" text NOT NULL,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "deletedAt" timestamp with time zone DEFAULT NULL
 );
 
 -- Create the applicantsJobs table
@@ -50,7 +52,8 @@ CREATE TABLE public.applications (
     "appliedDate" timestamp with time zone,
     "status" TEXT NOT NULL,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "deletedAt" timestamp with time zone DEFAULT NULL
 );
 
 COMMIT;
