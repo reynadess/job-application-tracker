@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
@@ -59,5 +60,12 @@ export class ApplicationsController {
             id,
             updateApplicationDto,
         );
+    }
+
+    @UseGuards(AccessGuard)
+    @UseAbility(Actions.delete, Application, ApplicationHook)
+    @Delete(':id')
+    async deleteApplication(@Param('id') id: number): Promise<void> {
+        await this.applicationsService.deleteApplication(id);
     }
 }
