@@ -1,62 +1,48 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UpdateApplicantDto } from './applicant.dto';
 import { Applicant } from './applicant.entity';
 
 @Injectable()
 export class ApplicantsService {
-  private readonly logger = new Logger(ApplicantsService.name);
+    private readonly logger = new Logger(ApplicantsService.name);
 
-  constructor(
-    @InjectRepository(Applicant)
-    private readonly applicantsRepository: Repository<Applicant>,
-  ) {}
+    constructor(
+        @InjectRepository(Applicant)
+        private readonly applicantsRepository: Repository<Applicant>,
+    ) {}
 
-  async findOne(username: string): Promise<Applicant | undefined> {
-    return await this.applicantsRepository.findOne({
-      where: { username },
-    });
-  }
-
-  async createOne(applicant: Applicant): Promise<Applicant> {
-    applicant = this.applicantsRepository.create(applicant);
-    applicant = await this.applicantsRepository.save(applicant);
-    return applicant;
-  }
-
-  async updateOne(
-    username: string,
-    updateData: Partial<Applicant>,
-  ): Promise<Applicant> {
-    const applicant = await this.applicantsRepository.findOne({
-      where: { username },
-    });
-
-    if (!applicant) {
-      throw new NotFoundException(
-        `Applicant with username ${username} not found`,
-      );
+    async findOne(username: string): Promise<Applicant | undefined> {
+        return await this.applicantsRepository.findOne({
+            where: { username },
+        });
     }
 
-    // Add validation logic here
-    if (updateData.hasOwnProperty('username')) {
-      throw new BadRequestException('Updating username is not allowed');
+    async createOne(applicant: Applicant): Promise<Applicant> {
+        applicant = this.applicantsRepository.create(applicant);
+        applicant = await this.applicantsRepository.save(applicant);
+        return applicant;
     }
 
-    // Only allow updates to these fields
-    const allowedFields = ['firstName', 'lastName', 'email'];
+    async updateOne(
+        username: string,
+        updateData: UpdateApplicantDto,
+    ): Promise<Applicant> {
+        const applicant = await this.applicantsRepository.findOne({
+            where: { username },
+        });
 
-    const filteredUpdateData = Object.fromEntries(
-      Object.entries(updateData).filter(([key]) => allowedFields.includes(key)),
-    );
+        if (!applicant) {
+            throw new NotFoundException(
+                `Applicant with username ${username} not found`,
+            );
+        }
 
-    Object.assign(applicant, filteredUpdateData);
+        applicant.firstName = updateData.firstName ?? applicant.firstName;
+        applicant.lastName = updateData.lastName ?? applicant.lastName;
+        applicant.email = updateData.email ?? applicant.email;
 
-    return await this.applicantsRepository.save(applicant);
-  }
+        return await this.applicantsRepository.save(applicant);
+    }
 }

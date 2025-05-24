@@ -1,12 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { AuditEntity } from '../../common/entity/audit.entity';
 import { ApplicationStatus } from '../application-status.enum';
 
 @Entity('applications')
 export class Application extends AuditEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-
     @Column({
         type: 'enum',
         enum: ApplicationStatus,

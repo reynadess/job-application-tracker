@@ -1,23 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Column, Entity } from 'typeorm';
 import { AuditEntity } from '../common/entity/audit.entity';
 
 @Entity('applicants')
 export class Applicant extends AuditEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @Column()
+    username: string;
 
-  @Column()
-  username: string;
+    @Column()
+    firstName: string;
 
-  @Column()
-  firstName: string;
+    @Column()
+    lastName: string;
 
-  @Column()
-  lastName: string;
+    @Column()
+    email: string;
 
-  @Column()
-  email: string;
-
-  @Column()
-  password: string;
+    @Exclude()
+    @Column()
+    password: string;
 }
