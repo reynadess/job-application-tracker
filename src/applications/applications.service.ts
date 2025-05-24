@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, UpdateResult } from 'typeorm';
 import { Job } from '../jobs/job.entity';
 import { JobService } from '../jobs/jobs.service';
 import { ApplicationStatus } from './application-status.enum';
@@ -147,5 +147,11 @@ export class ApplicationsService {
         const returnApplicationDto: ReturnApplicationDto =
             new ReturnApplicationDto(application);
         return returnApplicationDto;
+    }
+
+    async deleteApplication(id: number): Promise<boolean> {
+        const deleteResult: UpdateResult =
+            await this.applicationsReposirtory.softDelete(id);
+        return deleteResult.affected > 0;
     }
 }
