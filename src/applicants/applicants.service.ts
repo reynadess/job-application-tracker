@@ -1,7 +1,13 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { UpdateApplicantDto } from './applicant.dto';
+import { CreateApplicantDto, UpdateApplicantDto } from './applicant.dto';
 import { Applicant } from './applicant.entity';
 
 @Injectable()
@@ -19,7 +25,33 @@ export class ApplicantsService {
         });
     }
 
-    async createOne(applicant: Applicant): Promise<Applicant> {
+    async createOne(
+        createApplicantDto: CreateApplicantDto,
+    ): Promise<Applicant> {
+        const applicantExists = await this.applicantsRepository.findOne({
+            select: {
+                username: true,
+                email: true,
+            },
+            where: [
+                { username: createApplicantDto.username },
+                { email: createApplicantDto.email },
+            ],
+        });
+
+        if (applicantExists) {
+            this.logger.error(
+                `Applicant with username ${createApplicantDto.username} or email ${createApplicantDto.email} already exists`,
+            );
+            throw new ConflictException(
+                `Applicant with username ${createApplicantDto.username} or email ${createApplicantDto.email} already exists`,
+            );
+        }
+
+        let applicant: Applicant = plainToInstance(
+            Applicant,
+            createApplicantDto,
+        );
         applicant = this.applicantsRepository.create(applicant);
         applicant = await this.applicantsRepository.save(applicant);
         return applicant;

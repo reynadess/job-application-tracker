@@ -16,7 +16,7 @@ export class Applicant extends AuditEntity {
     @Column()
     email: string;
 
-    @Exclude()
+    @Exclude({ toPlainOnly: true })
     @Column()
     password: string;
 }
