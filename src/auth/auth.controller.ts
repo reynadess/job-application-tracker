@@ -19,7 +19,7 @@ import { Public } from './public.decorator';
 @Public()
 export class AuthController {
     private readonly logger = new Logger(AuthController.name);
-    constructor(private authService: BaseAuthService) {}
+    constructor(private readonly authService: BaseAuthService) {}
 
     @UseGuards(LocalAuthGuard)
     @Post('login')

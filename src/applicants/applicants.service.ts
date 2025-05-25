@@ -5,9 +5,13 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { CreateApplicantDto, UpdateApplicantDto } from './applicant.dto';
+import {
+    CreateApplicantDto,
+    ReturnApplicantDto,
+    UpdateApplicantDto,
+} from './applicant.dto';
 import { Applicant } from './applicant.entity';
 
 @Injectable()
@@ -20,26 +24,52 @@ export class ApplicantsService {
     ) {}
 
     async findOne(username: string): Promise<Applicant | undefined> {
-        return await this.applicantsRepository.findOne({
+        const applicant: Applicant = await this.applicantsRepository.findOne({
             where: { username },
         });
+
+        if (!applicant) {
+            this.logger.error(`Applicant with username ${username} not found`);
+            throw new NotFoundException(
+                `Applicant with username ${username} not found`,
+            );
+        }
+
+        return applicant;
     }
 
-    async createOne(
-        createApplicantDto: CreateApplicantDto,
-    ): Promise<Applicant> {
-        const applicantExists = await this.applicantsRepository.findOne({
-            select: {
-                username: true,
-                email: true,
-            },
-            where: [
-                { username: createApplicantDto.username },
-                { email: createApplicantDto.email },
-            ],
+    async getApplicant(username: string): Promise<ReturnApplicantDto> {
+        const applicant: Applicant = await this.applicantsRepository.findOne({
+            where: { username },
         });
 
-        if (applicantExists) {
+        if (!applicant) {
+            this.logger.error(`Applicant with username ${username} not found`);
+            throw new NotFoundException(
+                `Applicant with username ${username} not found`,
+            );
+        }
+
+        const returnApplicantDto = plainToInstance(
+            ReturnApplicantDto,
+            applicant,
+        );
+        return returnApplicantDto;
+    }
+
+    async createApplicant(
+        createApplicantDto: CreateApplicantDto,
+    ): Promise<boolean> {
+        const countOfApplicants: number = await this.applicantsRepository.count(
+            {
+                where: [
+                    { username: createApplicantDto.username },
+                    { email: createApplicantDto.email },
+                ],
+            },
+        );
+
+        if (countOfApplicants > 0) {
             this.logger.error(
                 `Applicant with username ${createApplicantDto.username} or email ${createApplicantDto.email} already exists`,
             );
@@ -53,15 +83,15 @@ export class ApplicantsService {
             createApplicantDto,
         );
         applicant = this.applicantsRepository.create(applicant);
-        applicant = await this.applicantsRepository.save(applicant);
-        return applicant;
+        await this.applicantsRepository.save(applicant);
+        return true;
     }
 
     async updateOne(
         username: string,
-        updateData: UpdateApplicantDto,
-    ): Promise<Applicant> {
-        const applicant = await this.applicantsRepository.findOne({
+        updateApplicantDto: UpdateApplicantDto,
+    ): Promise<ReturnApplicantDto> {
+        let applicant = await this.applicantsRepository.findOne({
             where: { username },
         });
 
@@ -71,10 +101,27 @@ export class ApplicantsService {
             );
         }
 
-        applicant.firstName = updateData.firstName ?? applicant.firstName;
-        applicant.lastName = updateData.lastName ?? applicant.lastName;
-        applicant.email = updateData.email ?? applicant.email;
+        // doing this step to ensure that only defined fields are updated
+        // and undefined fields are not updated
+        updateApplicantDto = instanceToPlain(updateApplicantDto, {
+            exposeUnsetFields: false,
+        });
+        applicant = plainToInstance(
+            Applicant,
+            {
+                ...applicant,
+                ...updateApplicantDto,
+            },
+            {
+                exposeUnsetFields: false,
+            },
+        );
 
-        return await this.applicantsRepository.save(applicant);
+        applicant = await this.applicantsRepository.save(applicant);
+        const returnApplicantDto: ReturnApplicantDto = plainToInstance(
+            ReturnApplicantDto,
+            applicant,
+        );
+        return returnApplicantDto;
     }
 }

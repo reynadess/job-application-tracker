@@ -1,15 +1,7 @@
-import {
-    Body,
-    Controller,
-    Get,
-    NotFoundException,
-    Param,
-    Patch,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
-import { UpdateApplicantDto } from './applicant.dto';
+import { ReturnApplicantDto, UpdateApplicantDto } from './applicant.dto';
 import { Applicant } from './applicant.entity';
 import { ApplicantHook } from './applicant.hook';
 import { ApplicantsService } from './applicants.service';
@@ -23,14 +15,8 @@ export class ApplicantsController {
     @UseAbility(Actions.read, Applicant, ApplicantHook)
     async getApplicantByUsername(
         @Param('username') username: string,
-    ): Promise<Applicant | undefined> {
-        const applicant = await this.applicantsService.findOne(username);
-        if (!applicant) {
-            throw new NotFoundException(
-                `Applicant with username ${username} not found`,
-            );
-        }
-        return applicant;
+    ): Promise<ReturnApplicantDto | undefined> {
+        return await this.applicantsService.getApplicant(username);
     }
 
     @Patch(':username')
@@ -39,11 +25,9 @@ export class ApplicantsController {
     async updateApplicant(
         @Param('username') username: string,
         @Body() updateData: UpdateApplicantDto,
-    ): Promise<Applicant> {
-        const updatedApplicant = await this.applicantsService.updateOne(
-            username,
-            updateData,
-        );
+    ): Promise<ReturnApplicantDto> {
+        const updatedApplicant: ReturnApplicantDto =
+            await this.applicantsService.updateOne(username, updateData);
         return updatedApplicant;
     }
 }

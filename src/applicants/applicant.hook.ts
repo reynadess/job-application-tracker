@@ -5,11 +5,11 @@ import { ApplicantsService } from './applicants.service';
 
 @Injectable()
 export class ApplicantHook
-  implements SubjectBeforeFilterHook<Applicant, Request>
+    implements SubjectBeforeFilterHook<Applicant, Request>
 {
-  constructor(private readonly applicantsService: ApplicantsService) {}
+    constructor(private readonly applicantsService: ApplicantsService) {}
 
-  async run({ params }: Request): Promise<Applicant | undefined> {
-    return await this.applicantsService.findOne(params.username);
-  }
+    async run({ params }: Request): Promise<Applicant | undefined> {
+        return await this.applicantsService.findOne(params.username);
+    }
 }

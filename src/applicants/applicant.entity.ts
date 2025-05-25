@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import { Column, Entity } from 'typeorm';
 import { AuditEntity } from '../common/entity/audit.entity';
 
@@ -16,7 +15,6 @@ export class Applicant extends AuditEntity {
     @Column()
     email: string;
 
-    @Exclude({ toPlainOnly: true })
     @Column()
     password: string;
 }
