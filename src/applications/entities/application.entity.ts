@@ -18,6 +18,6 @@ export class Application extends AuditEntity {
     @Column({ nullable: false })
     jobId: number;
 
-    @Column({ type: 'timestamptz' })
+    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     appliedDate: Date;
 }

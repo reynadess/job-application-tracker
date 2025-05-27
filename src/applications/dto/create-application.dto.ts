@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsUrl, Length } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUrl, Length, Min } from 'class-validator';
 import { Job } from '../../jobs/job.entity';
 import { ApplicationStatus } from '../application-status.enum';
 import { Application } from '../entities/application.entity';
@@ -26,6 +26,17 @@ export class CreateApplicationDto {
 
     @IsOptional()
     description: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    ctcOffered: number;
+
+    @IsEnum(ApplicationStatus)
+    status: ApplicationStatus;
+
+    @IsOptional()
+    appliedDate: Date;
 }
 
 export class ReturnApplicationDto {
@@ -56,8 +67,14 @@ export class ReturnApplicationDto {
     @IsOptional()
     description: string;
 
+    @IsOptional()
+    ctcOffered: number;
+
     @IsEnum(ApplicationStatus)
     status: ApplicationStatus;
+
+    @IsOptional()
+    appliedDate: Date;
 
     constructor(application?: Partial<Application>, job?: Partial<Job>) {
         this.id = application?.id;
@@ -71,5 +88,7 @@ export class ReturnApplicationDto {
         this.country = job?.country;
         this.description = job?.description;
         this.status = application?.status;
+        this.appliedDate = application?.appliedDate;
+        this.ctcOffered = job?.ctcOffered
     }
 }
