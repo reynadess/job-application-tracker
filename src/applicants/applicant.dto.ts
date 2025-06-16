@@ -26,7 +26,10 @@ export class CreateApplicantDto {
 }
 
 export class LoginApplicantDTO {
+    @Expose()
     username: string;
+
+    @Expose()
     password: string;
 }
 
