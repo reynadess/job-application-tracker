@@ -1,6 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    Logger,
+    NotFoundException,
+    UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { DataSource, Repository, UpdateResult } from 'typeorm';
 import { Job } from '../jobs/job.entity';
 import { JobService } from '../jobs/jobs.service';
@@ -27,7 +32,7 @@ export class ApplicationsService {
         userId: number,
         skip = 0,
         take = 100,
-    ): Promise<undefined | ReturnApplicationDto[]> {
+    ): Promise<ReturnApplicationDto[]> {
         const applications: Application[] =
             await this.applicationsReposirtory.find({
                 where: { userId },
@@ -45,15 +50,15 @@ export class ApplicationsService {
         for (const application of applications) {
             const job: Job = jobs.find((job) => job.id === application.jobId);
             if (job) {
-                returnApplications.push(
-                    new ReturnApplicationDto(application, job),
-                );
+                const returnApplication: ReturnApplicationDto =
+                    await this.getReturnApplicationDto(job, application);
+                returnApplications.push(returnApplication);
             }
         }
         return returnApplications;
     }
 
-    async getApplication(id: number): Promise<Application | undefined> {
+    async getApplication(id: number): Promise<Application> {
         const application: Application =
             await this.applicationsReposirtory.findOne({
                 where: { id },
@@ -64,10 +69,7 @@ export class ApplicationsService {
         return application;
     }
 
-    async findOne(
-        id: number,
-        userId: number,
-    ): Promise<ReturnApplicationDto | undefined> {
+    async findOne(id: number, userId: number): Promise<ReturnApplicationDto> {
         const application: Application =
             await this.applicationsReposirtory.findOne({
                 where: { id, userId },
@@ -89,8 +91,10 @@ export class ApplicationsService {
         this.logger.debug(
             `Job found successfully: ${job.id} for user ID ${userId}`,
         );
-        let returnApplicationDto: ReturnApplicationDto =
-            new ReturnApplicationDto(application, job);
+        const returnApplicationDto = await this.getReturnApplicationDto(
+            job,
+            application,
+        );
         return returnApplicationDto;
     }
 
@@ -103,6 +107,7 @@ export class ApplicationsService {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
+        let returnApplicationDto: ReturnApplicationDto;
         try {
             job = await queryRunner.manager.save(job);
             this.logger.debug(`Job created successfully: ${job.company}`);
@@ -116,6 +121,10 @@ export class ApplicationsService {
                 `Application created successfully for Application ID: ${applicationEntity.id} for Company ${job.company}`,
             );
             await queryRunner.commitTransaction();
+            returnApplicationDto = await this.getReturnApplicationDto(
+                job,
+                applicationEntity,
+            );
         } catch (error) {
             this.logger.error('Error creating application', error);
             await queryRunner.rollbackTransaction();
@@ -123,17 +132,14 @@ export class ApplicationsService {
         } finally {
             await queryRunner.release();
         }
-        const returnApplicationDto = new ReturnApplicationDto(
-            applicationEntity,
-            job,
-        );
+
         return returnApplicationDto;
     }
 
     async updateApplication(
         id: number,
         updateApplicationDto: UpdateApplicationDto,
-    ): Promise<ReturnApplicationDto | undefined> {
+    ): Promise<ReturnApplicationDto> {
         let application: Application =
             await this.applicationsReposirtory.findOne({
                 where: { id },
@@ -142,17 +148,46 @@ export class ApplicationsService {
         if (!application) {
             throw new NotFoundException(`Application with ID ${id} not found`);
         }
-        application.status = updateApplicationDto.status;
-        application.appliedDate = updateApplicationDto.appliedDate;
-        application = await this.applicationsReposirtory.save(application);
+        const updateApplicationPlainObject = instanceToPlain(
+            updateApplicationDto,
+            { exposeUnsetFields: false },
+        );
+        application = plainToInstance(Application, {
+            ...application,
+            ...updateApplicationPlainObject,
+        });
+        const savedApplication =
+            await this.applicationsReposirtory.save(application);
         const returnApplicationDto: ReturnApplicationDto =
-            new ReturnApplicationDto(application);
+            await this.getReturnApplicationDto(undefined, savedApplication);
         return returnApplicationDto;
     }
 
     async deleteApplication(id: number): Promise<boolean> {
         const deleteResult: UpdateResult =
             await this.applicationsReposirtory.softDelete(id);
+        if (deleteResult.affected === 0) {
+            this.logger.error(`Application not deleted ID: ${id}`);
+            throw new UnprocessableEntityException(`Application not deleted`);
+        }
         return deleteResult.affected > 0;
+    }
+
+    async getReturnApplicationDto(
+        job: Job,
+        application: Application,
+    ): Promise<ReturnApplicationDto> {
+        const returnApplicationDto: ReturnApplicationDto = plainToInstance(
+            ReturnApplicationDto,
+            {
+                ...application,
+                ...job,
+            },
+        );
+        returnApplicationDto.id = application?.id ?? undefined;
+        returnApplicationDto.jobId = job?.id ?? undefined;
+        returnApplicationDto.userId = application?.userId ?? undefined;
+        returnApplicationDto.status = application?.status ?? undefined;
+        return returnApplicationDto;
     }
 }

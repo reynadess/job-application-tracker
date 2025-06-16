@@ -1,41 +1,49 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
+import { IsEmail, IsString } from 'class-validator';
 
 export class CreateApplicantDto {
-  @IsString()
-  username: string;
+    @IsString()
+    @Expose()
+    username: string;
 
-  @IsString()
-  firstName: string;
+    @IsString()
+    @Expose()
+    firstName: string;
 
-  @IsString()
-  lastName: string;
+    @IsString()
+    @Expose()
+    lastName: string;
 
-  @IsEmail()
-  email: string;
+    @IsEmail()
+    @Expose()
+    email: string;
 
-  @IsString()
-  password: string;
+    // TODO - Password Validation
+    @IsString()
+    @Expose()
+    password: string;
 }
 
 export class LoginApplicantDTO {
-  username: string;
-  password: string;
+    @Expose()
+    username: string;
+
+    @Expose()
+    password: string;
 }
 
-export class UpdateApplicantDto {
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  firstName?: string;
+export class PasswordOmittedApplicantDto extends OmitType(CreateApplicantDto, [
+    'password',
+] as const) {}
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  lastName?: string;
+export class UpdateOmittedApplicantDto extends OmitType(
+    PasswordOmittedApplicantDto,
+    ['username', 'email'] as const,
+) {}
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsEmail()
-  email?: string;
-}
+export class UpdateApplicantDto extends PartialType(
+    UpdateOmittedApplicantDto,
+) {}
+
+export class ReturnApplicantDto extends PasswordOmittedApplicantDto {}

@@ -16,7 +16,9 @@ async function bootstrap() {
         credentials: true,
     }); // TODO Update this for production
     app.useGlobalInterceptors(
-        new ClassSerializerInterceptor(app.get(Reflector)),
+        new ClassSerializerInterceptor(app.get(Reflector), {
+            excludeExtraneousValues: true,
+        }),
     );
     //validation pipes globally
     app.useGlobalPipes(

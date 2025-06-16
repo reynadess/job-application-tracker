@@ -1,30 +1,45 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsUrl, Length, Min } from 'class-validator';
-import { Job } from '../../jobs/job.entity';
+import { PartialType } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
+import {
+    IsEnum,
+    IsNumber,
+    IsOptional,
+    IsString,
+    IsUrl,
+    Length,
+    Min,
+} from 'class-validator';
 import { ApplicationStatus } from '../application-status.enum';
-import { Application } from '../entities/application.entity';
 
 export class CreateApplicationDto {
     @Length(1, 255)
     @IsString()
+    @Expose()
     role: string;
 
     @Length(1, 255)
     @IsOptional()
+    @Expose()
     company: string;
 
     @IsUrl()
+    @Expose()
     jobLink: string;
 
     @IsOptional()
+    @Expose()
     city: string;
 
     @IsOptional()
+    @Expose()
     state: string;
 
     @IsOptional()
+    @Expose()
     country: string;
 
     @IsOptional()
+    @Expose()
     description: string;
 
     @IsOptional()
@@ -39,56 +54,22 @@ export class CreateApplicationDto {
     appliedDate: Date;
 }
 
-export class ReturnApplicationDto {
+export class ReturnApplicationDto extends PartialType(CreateApplicationDto) {
+    @Expose()
+    @IsNumber()
     id: number;
+
+    @Expose()
+    @IsNumber()
     userId: number;
+
+    @Expose()
+    @IsNumber()
     jobId: number;
 
-    @Length(1, 255)
-    @IsString()
-    role: string;
-
-    @Length(1, 255)
-    @IsOptional()
-    company: string;
-
-    @IsUrl()
-    jobLink: string;
-
-    @IsOptional()
-    city: string;
-
-    @IsOptional()
-    state: string;
-
-    @IsOptional()
-    country: string;
-
-    @IsOptional()
-    description: string;
-
-    @IsOptional()
-    ctcOffered: number;
-
-    @IsEnum(ApplicationStatus)
+    @Expose()
+    @IsEnum(ApplicationStatus, {
+        message: `Status must be one of the following: ${Object.values(ApplicationStatus)}`,
+    })
     status: ApplicationStatus;
-
-    @IsOptional()
-    appliedDate: Date;
-
-    constructor(application?: Partial<Application>, job?: Partial<Job>) {
-        this.id = application?.id;
-        this.userId = application?.userId;
-        this.jobId = application?.jobId;
-        this.role = job?.role;
-        this.company = job?.company;
-        this.jobLink = job?.jobLink;
-        this.city = job?.city;
-        this.state = job?.state;
-        this.country = job?.country;
-        this.description = job?.description;
-        this.status = application?.status;
-        this.appliedDate = application?.appliedDate;
-        this.ctcOffered = job?.ctcOffered
-    }
 }
