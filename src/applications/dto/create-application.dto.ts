@@ -7,6 +7,7 @@ import {
     IsString,
     IsUrl,
     Length,
+    Min,
 } from 'class-validator';
 import { ApplicationStatus } from '../application-status.enum';
 
@@ -40,6 +41,17 @@ export class CreateApplicationDto {
     @IsOptional()
     @Expose()
     description: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    ctcOffered: number;
+
+    @IsEnum(ApplicationStatus)
+    status: ApplicationStatus;
+
+    @IsOptional()
+    appliedDate: Date;
 }
 
 export class ReturnApplicationDto extends PartialType(CreateApplicationDto) {

@@ -113,7 +113,8 @@ export class ApplicationsService {
             this.logger.debug(`Job created successfully: ${job.company}`);
             applicationEntity.jobId = job.id;
             applicationEntity.userId = userId;
-            applicationEntity.status = ApplicationStatus.Apply;
+            applicationEntity.status = application.status|| ApplicationStatus.Apply;
+            applicationEntity.appliedDate = application.appliedDate || new Date();
             applicationEntity =
                 await queryRunner.manager.save(applicationEntity);
             this.logger.debug(
