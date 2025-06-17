@@ -45,7 +45,7 @@ export class ApplicationsService {
         const jobIds: number[] = applications.map(
             (application) => application.jobId,
         );
-        const jobs: Job[] = await this.jobService.getJobs(jobIds);
+        const jobs: Job[] = await this.jobService.getJobsbyIds(jobIds);
         let returnApplications: ReturnApplicationDto[] = [];
         for (const application of applications) {
             const job: Job = jobs.find((job) => job.id === application.jobId);
