@@ -13,9 +13,9 @@ import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
-    JobsModule,
     AuthModule,
     ApplicantsModule,
+    JobsModule,
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
