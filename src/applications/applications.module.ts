@@ -8,12 +8,12 @@ import { ApplicationsService } from './applications.service';
 import { Application } from './entities/application.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Application]),
-    CaslModule.forFeature({ permissions }),
-    JobsModule,
-  ],
-  controllers: [ApplicationsController],
-  providers: [ApplicationsService],
+    imports: [
+        TypeOrmModule.forFeature([Application]),
+        CaslModule.forFeature({ permissions }),
+        JobsModule,
+    ],
+    controllers: [ApplicationsController],
+    providers: [ApplicationsService],
 })
 export class ApplicationsModule {}

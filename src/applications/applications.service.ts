@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { DataSource, Repository, UpdateResult } from 'typeorm';
-import { Job } from '../jobs/job.entity';
 import { JobService } from '../jobs/jobs.service';
 import { ApplicationStatus } from './application-status.enum';
 import {
@@ -16,6 +15,9 @@ import {
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
+import { Job } from 'src/jobs/entities/job.entity';
+import { ReturnJobDto } from 'src/jobs/dto/job.dto';
+import { JobStatus } from 'src/jobs/job-status.enum';
 
 @Injectable()
 export class ApplicationsService {
@@ -45,10 +47,12 @@ export class ApplicationsService {
         const jobIds: number[] = applications.map(
             (application) => application.jobId,
         );
-        const jobs: Job[] = await this.jobService.getJobsbyIds(jobIds);
+        const jobs: ReturnJobDto[] = await this.jobService.getJobsbyIds(jobIds);
         let returnApplications: ReturnApplicationDto[] = [];
         for (const application of applications) {
-            const job: Job = jobs.find((job) => job.id === application.jobId);
+            const job: ReturnJobDto = jobs.find(
+                (job) => job.id === application.jobId,
+            );
             if (job) {
                 const returnApplication: ReturnApplicationDto =
                     await this.getReturnApplicationDto(job, application);
@@ -64,7 +68,7 @@ export class ApplicationsService {
                 where: { id },
             });
         if (!application) {
-            throw new NotFoundException(`Application with ID ${id} not found}`);
+            throw new NotFoundException(`Application with ID ${id} not found`);
         }
         return application;
     }
@@ -82,7 +86,9 @@ export class ApplicationsService {
         this.logger.debug(
             `Application found successfully: ${application.id} for user ID ${userId}`,
         );
-        const job: Job = await this.jobService.getJob(application.jobId);
+        const job: ReturnJobDto = await this.jobService.getJob(
+            application.jobId,
+        );
         if (!job) {
             throw new NotFoundException(
                 `Job with ID ${application.jobId} not found for user ID ${userId}`,
@@ -102,28 +108,50 @@ export class ApplicationsService {
         application: CreateApplicationDto,
         userId: number,
     ): Promise<ReturnApplicationDto> {
-        let job = plainToInstance(Job, application);
+        // Create a Job entity instance instead of DTO
+        let jobEntity = new Job();
+        jobEntity.role = application.role;
+        jobEntity.company = application.company;
+        jobEntity.jobLink = application.jobLink;
+        jobEntity.city = application.city;
+        jobEntity.state = application.state;
+        jobEntity.country = application.country;
+        jobEntity.description = application.description;
+        jobEntity.ctcOffered = application.ctcOffered;
+        jobEntity.status = JobStatus.Open;
+
         let applicationEntity = new Application();
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         let returnApplicationDto: ReturnApplicationDto;
+
         try {
-            job = await queryRunner.manager.save(job);
-            this.logger.debug(`Job created successfully: ${job.company}`);
-            applicationEntity.jobId = job.id;
+            // Save the Job entity
+            const savedJob = await queryRunner.manager.save(jobEntity);
+            this.logger.debug(`Job created successfully: ${savedJob.company}`);
+
+            // Create application with the saved job ID
+            applicationEntity.jobId = savedJob.id;
             applicationEntity.userId = userId;
-            applicationEntity.status = application.status|| ApplicationStatus.Apply;
-            applicationEntity.appliedDate = application.appliedDate || new Date();
-            applicationEntity =
+            applicationEntity.status =
+                application.status || ApplicationStatus.Apply;
+            applicationEntity.appliedDate =
+                application.appliedDate || new Date();
+
+            const savedApplication =
                 await queryRunner.manager.save(applicationEntity);
             this.logger.debug(
-                `Application created successfully for Application ID: ${applicationEntity.id} for Company ${job.company}`,
+                `Application created successfully for Application ID: ${savedApplication.id} for Company ${savedJob.company}`,
             );
+
             await queryRunner.commitTransaction();
+
+            // Convert saved job to ReturnJobDto for the response
+            const jobDto = plainToInstance(ReturnJobDto, savedJob);
             returnApplicationDto = await this.getReturnApplicationDto(
-                job,
-                applicationEntity,
+                jobDto,
+                savedApplication,
             );
         } catch (error) {
             this.logger.error('Error creating application', error);
@@ -174,7 +202,7 @@ export class ApplicationsService {
     }
 
     async getReturnApplicationDto(
-        job: Job,
+        job: ReturnJobDto,
         application: Application,
     ): Promise<ReturnApplicationDto> {
         const returnApplicationDto: ReturnApplicationDto = plainToInstance(

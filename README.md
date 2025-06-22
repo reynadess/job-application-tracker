@@ -1,99 +1,163 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://nestjs.com" target="_blank">
+    <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <b>A progressive Node.js framework for building efficient, scalable, and enterprise-grade backend applications.</b>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+<p align="center">
+  <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+  <a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+  <a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master" alt="Coverage" /></a>
+  <a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord" /></a>
+</p>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 🧾 Description
 
-```bash
-$ npm install
-```
+This is a NestJS backend project for a **Job Application Tracker**. The backend is powered by **PostgreSQL** and containerized using **Docker** for easy local development.
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## ⚙️ Project Setup
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
+### 1. Clone the repository
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone https://github.com/reynadess/job-application-tracker.git
+cd job-application-tracker
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 2. Install dependencies
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm install
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 3. Create a `.env` file in the root directory
 
-## Resources
+Paste the following content:
 
-Check out a few resources that may come in handy when working with NestJS:
+```env
+DATABASE_TYPE=postgres
+DATABASE_HOST=localhost
+DATABASE_PORT=5431
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=JobApplicationTracker
+PORT=3000
+MODE=DEV
+RUN_MIGRATIONS=true
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 🐳 Running with Docker
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Make sure you have **Docker Desktop** running.
 
-## Stay in touch
+### First time setup:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+docker-compose up --build
+```
 
-## License
+This will spin up two containers:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `postgres-job-application-tracker`
+- `api-job-application-tracker`
+
+### Daily development flow (for backend devs):
+
+You **do not** need to rebuild every time. Follow these steps instead:
+
+1. Open Docker Desktop.
+2. Stop the container: `api-job-application-tracker`
+3. Ensure `postgres-job-application-tracker` is **running**.
+4. Open VS Code.
+5. Go to **Run & Debug**.
+6. Select `Node.js` and hit **Start Debugging** (or use the command below).
+
+---
+
+## 🚀 Run the App
+
+### Development
+
+```bash
+npm run start:dev
+```
+
+### Debug Mode (from VS Code or terminal)
+
+```bash
+npm run start:debug
+```
+
+### Production
+
+```bash
+npm run start:prod
+```
+
+Once running, visit:
+
+```
+http://localhost:3000/swagger
+```
+
+To access the **Swagger API documentation** and test endpoints.
+
+---
+
+## 🧪 Run Tests
+
+```bash
+# Unit tests
+npm run test
+
+# End-to-end tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+```
+
+---
+
+## 🧾 Resources
+
+- 📘 [Official NestJS Docs](https://docs.nestjs.com)
+- 🎥 [Official Courses](https://courses.nestjs.com/)
+- 🧰 [NestJS Devtools](https://devtools.nestjs.com)
+- ☁️ [NestJS Mau Deployment](https://mau.nestjs.com)
+- 💬 [Discord Community](https://discord.gg/G7Qnnhy)
+- 💼 [Job Board](https://jobs.nestjs.com)
+
+---
+
+## 🤝 Support
+
+NestJS is an MIT-licensed open-source project. You can support its development via:
+
+- [Open Collective](https://opencollective.com/nest#sponsor)
+- [PayPal](https://paypal.me/kamilmysliwiec)
+
+---
+
+## 📬 Stay in Touch
+
+- Author – [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Twitter – [@nestframework](https://twitter.com/nestframework)
+- Website – [nestjs.com](https://nestjs.com)
+
+---
+
+## 📝 License
+
+This project is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
