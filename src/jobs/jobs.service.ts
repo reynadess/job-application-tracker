@@ -1,9 +1,16 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
+    UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { CreateJobDto, UpdateJobDto } from './job.dto';
-import { Job } from './job.entity';
+import { In, Repository, UpdateResult } from 'typeorm';
+import { CreateJobDto, ReturnJobDto, UpdateJobDto } from './dto/job.dto';
+import { Job } from './entities/job.entity';
 import { JobStatus } from './job-status.enum';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class JobService {
@@ -12,13 +19,20 @@ export class JobService {
         @InjectRepository(Job) private readonly jobRepository: Repository<Job>,
     ) {}
 
-    async addJob(jobDto: CreateJobDto): Promise<Job> {
+    async addJob(jobDto: CreateJobDto, userId: number): Promise<Job> {
         try {
             const job = this.jobRepository.create({
                 ...jobDto,
                 status: jobDto.status || JobStatus.Open,
+                recruiterId: userId,
             });
+
             const savedJob = await this.jobRepository.save(job);
+            if (!savedJob) {
+                throw new InternalServerErrorException(
+                    'Something went wrong try again',
+                );
+            }
             this.logger.log(`Job created with ID : ${savedJob.id}`);
             return savedJob;
         } catch (error) {
@@ -26,97 +40,52 @@ export class JobService {
             throw error;
         }
     }
-    async getAllJobs(): Promise<Job[]> {
-        try {
-            return await this.jobRepository.find({
-                order: { createdAt: 'DESC' },
-            });
-        } catch (error) {
-            this.logger.error(`Failed to fetch jobs: ${error.message}`);
-            throw error;
+    async getJob(id: number): Promise<ReturnJobDto> {
+        const job: Job = await this.jobRepository.findOne({
+            where: { id },
+        });
+        if (!job) {
+            throw new NotFoundException(`Job with Id ${id} not found`);
         }
+        return plainToInstance(ReturnJobDto, job);
+    }
+    async getJobsbyIds(jobIds: number[]): Promise<ReturnJobDto[]> {
+        const jobs = await this.jobRepository.findBy({ id: In(jobIds) });
+        if (!jobs || jobs.length === 0) {
+            throw new NotFoundException('Jobs not found');
+        }
+        return jobs.map((job) => plainToInstance(ReturnJobDto, job));
+    }
+    async getAllJobs(): Promise<ReturnJobDto[]> {
+        const jobs = await this.jobRepository.find({
+            order: { createdAt: 'DESC' },
+        });
+
+        return jobs.map((job) => plainToInstance(ReturnJobDto, job));
     }
 
-    async getJobsbyIds(jobIds: number[]): Promise<Job[]> {
-        try {
-            const jobs = await this.jobRepository.findBy({ id: In(jobIds) });
-            return jobs;
-        } catch (error) {
-            this.logger.error(`Failed to fetch jobs by Ids : ${error.message}`);
-            throw error;
-        }
-    }
-    async getJob(id: number): Promise<Job> {
-        try {
-            const job: Job = await this.jobRepository.findOne({
-                where: { id },
-            });
-            if (!job) {
-                throw new NotFoundException(`Job with Id ${id} not found`);
-            }
-            return job;
-        } catch (error) {
-            if (error instanceof NotFoundException) {
-                throw error;
-            }
-            this.logger.error(
-                `Failed to fetch job with ID : ${id} : ${error.message}`,
-            );
-            throw error;
-        }
-    }
     async updateJob(id: number, jobDto: UpdateJobDto): Promise<Job> {
-        try {
-            const job = await this.getJob(id);
-            Object.assign(job, jobDto);
-            const updateJob = await this.jobRepository.save(job);
-            this.logger.log(`Job with ID ${id} updated successfully`);
-            return updateJob;
-        } catch (error) {
-            this.logger.error(
-                `Failed to update job With ID ${id} : ${error.message}`,
-            );
-            throw error;
+        const job = await this.getJob(id);
+        if (!job) {
+            throw new NotFoundException(`Job with id ${id} not found`);
         }
+        Object.assign(job, jobDto);
+        const updateJob = await this.jobRepository.save(job);
+        if (!updateJob) {
+            throw new InternalServerErrorException('Internal server error');
+        }
+        this.logger.log(`Job with ID ${id} updated successfully`);
+        return updateJob;
     }
-    async deleteJob(id: number): Promise<void> {
-        try {
-            const job = await this.getJob(id);
-            await this.jobRepository.remove(job);
-            this.logger.log(`Job with ID ${id} deleted successfully`);
-        } catch (error) {
-            this.logger.error(
-                `Failed to delete job with id ${id} : ${error.message}`,
-            );
-            throw error;
+    async deleteJob(id: number): Promise<boolean> {
+        const job = await this.getJob(id);
+        const deletedJob: UpdateResult =
+            await this.jobRepository.softDelete(id);
+        if (deletedJob.affected === 0) {
+            this.logger.log(`Job with id ${id} not deleted`);
+            throw new UnprocessableEntityException('Job not deleted');
         }
-    }
-
-    async getJobsByStatus(status: JobStatus): Promise<Job[]> {
-        try {
-            return await this.jobRepository.find({
-                where: { status },
-                order: { createdAt: 'DESC' },
-            });
-        } catch (error) {
-            this.logger.error(
-                `Failed to fetch jobs by status : ${error.message}`,
-            );
-            throw error;
-        }
-    }
-
-    async getJobsByCompany(companyId: number): Promise<Job[]> {
-        try {
-            return this.jobRepository.find({
-                where: { companyId },
-                order: { createdAt: 'DESC' },
-            });
-        } catch (error) {
-            this.logger.error(
-                `Failed to Fetch jobs by company : ${error.message}`,
-            );
-            throw error;
-        }
+        this.logger.log(`Job with Id ${id} soft deleted successfully`);
+        return deletedJob.affected > 0;
     }
 }
