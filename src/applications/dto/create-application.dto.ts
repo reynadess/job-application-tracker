@@ -72,4 +72,13 @@ export class ReturnApplicationDto extends PartialType(CreateApplicationDto) {
         message: `Status must be one of the following: ${Object.values(ApplicationStatus)}`,
     })
     status: ApplicationStatus;
+
+    @Expose()
+    @IsOptional()
+    @IsNumber()
+    ctcOffered?: number;
+
+    @Expose()
+    @IsOptional()
+    appliedDate?: Date;
 }

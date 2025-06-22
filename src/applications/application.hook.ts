@@ -5,11 +5,13 @@ import { Application } from './entities/application.entity';
 
 @Injectable()
 export class ApplicationHook
-  implements SubjectBeforeFilterHook<Application, Request>
+    implements SubjectBeforeFilterHook<Application, Request>
 {
-  constructor(private readonly applicationService: ApplicationsService) {}
+    constructor(private readonly applicationService: ApplicationsService) {}
 
-  async run(req: Request): Promise<Application | undefined> {
-    return await this.applicationService.getApplication(Number(req.params.id));
-  }
+    async run(req: Request): Promise<Application | undefined> {
+        return await this.applicationService.getApplication(
+            Number(req.params.id),
+        );
+    }
 }
