@@ -25,13 +25,13 @@ export class JobsController {
     @UseGuards(AccessGuard)
     @UseAbility(Actions.create, Job)
     @Post()
-    async addJob(@Req() req, @Body() createJobDto: CreateJobDto) {
-        return await this.jobsService.addJob(createJobDto, req.user.id);
+    async createJob(@Req() req, @Body() createJobDto: CreateJobDto) {
+        return await this.jobsService.createJob(createJobDto, req.user.id);
     }
 
     @UseGuards(AccessGuard)
     @UseAbility(Actions.read, Job)
-    @Get('by-ids')
+    @Get('ids')
     async getJobsbyIds(@Query('ids') ids: string) {
         const jobIds = ids.split(',').map((id) => parseInt(id.trim()));
 

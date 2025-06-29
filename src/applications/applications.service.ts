@@ -108,18 +108,7 @@ export class ApplicationsService {
         application: CreateApplicationDto,
         userId: number,
     ): Promise<ReturnApplicationDto> {
-        // Create a Job entity instance instead of DTO
-        let jobEntity = new Job();
-        jobEntity.role = application.role;
-        jobEntity.company = application.company;
-        jobEntity.jobLink = application.jobLink;
-        jobEntity.city = application.city;
-        jobEntity.state = application.state;
-        jobEntity.country = application.country;
-        jobEntity.description = application.description;
-        jobEntity.ctcOffered = application.ctcOffered;
-        jobEntity.status = JobStatus.Open;
-
+        let jobEntity = Job.fromApplication(application);
         let applicationEntity = new Application();
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();

@@ -19,20 +19,14 @@ export class JobService {
         @InjectRepository(Job) private readonly jobRepository: Repository<Job>,
     ) {}
 
-    async addJob(jobDto: CreateJobDto, userId: number): Promise<Job> {
+    async createJob(jobDto: CreateJobDto, userId: number): Promise<Job> {
         try {
             const job = this.jobRepository.create({
                 ...jobDto,
                 status: jobDto.status || JobStatus.Open,
-                recruiterId: userId,
             });
 
             const savedJob = await this.jobRepository.save(job);
-            if (!savedJob) {
-                throw new InternalServerErrorException(
-                    'Something went wrong try again',
-                );
-            }
             this.logger.log(`Job created with ID : ${savedJob.id}`);
             return savedJob;
         } catch (error) {
@@ -65,17 +59,22 @@ export class JobService {
     }
 
     async updateJob(id: number, jobDto: UpdateJobDto): Promise<Job> {
-        const job = await this.getJob(id);
-        if (!job) {
-            throw new NotFoundException(`Job with id ${id} not found`);
+        try {
+            const job = await this.getJob(id);
+            if (!job) {
+                throw new NotFoundException(`Job with id ${id} not found`);
+            }
+            Object.assign(job, jobDto);
+            const updateJob = await this.jobRepository.save(job);
+            if (!updateJob) {
+                throw new InternalServerErrorException('Internal server error');
+            }
+            this.logger.log(`Job with ID ${id} updated successfully`);
+            return updateJob;
+        } catch (error) {
+            this.logger.log(`Failed to update job : ${error}`);
+            throw new InternalServerErrorException(`Something went wrong`);
         }
-        Object.assign(job, jobDto);
-        const updateJob = await this.jobRepository.save(job);
-        if (!updateJob) {
-            throw new InternalServerErrorException('Internal server error');
-        }
-        this.logger.log(`Job with ID ${id} updated successfully`);
-        return updateJob;
     }
     async deleteJob(id: number): Promise<boolean> {
         const job = await this.getJob(id);
