@@ -17,7 +17,6 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
 import { Job } from 'src/jobs/entities/job.entity';
 import { ReturnJobDto } from 'src/jobs/dto/job.dto';
-import { JobStatus } from 'src/jobs/job-status.enum';
 
 @Injectable()
 export class ApplicationsService {
