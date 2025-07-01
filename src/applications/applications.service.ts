@@ -46,10 +46,10 @@ export class ApplicationsService {
         const jobIds: number[] = applications.map(
             (application) => application.jobId,
         );
-        const jobs: ReturnJobDto[] = await this.jobService.getJobsbyIds(jobIds);
+        const jobs: Job[] = await this.jobService.getJobsbyIds(jobIds);
         let returnApplications: ReturnApplicationDto[] = [];
         for (const application of applications) {
-            const job: ReturnJobDto = jobs.find(
+            const job: Job = jobs.find(
                 (job) => job.id === application.jobId,
             );
             if (job) {
@@ -85,7 +85,7 @@ export class ApplicationsService {
         this.logger.debug(
             `Application found successfully: ${application.id} for user ID ${userId}`,
         );
-        const job: ReturnJobDto = await this.jobService.getJob(
+        const job: Job = await this.jobService.getJob(
             application.jobId,
         );
         if (!job) {
@@ -116,30 +116,29 @@ export class ApplicationsService {
 
         try {
             // Save the Job entity
-            const savedJob = await queryRunner.manager.save(jobEntity);
-            this.logger.debug(`Job created successfully: ${savedJob.company}`);
+            jobEntity = await queryRunner.manager.save(jobEntity);
+            this.logger.debug(`Job created successfully: ${jobEntity.company}`);
 
             // Create application with the saved job ID
-            applicationEntity.jobId = savedJob.id;
+            applicationEntity.jobId = jobEntity.id;
             applicationEntity.userId = userId;
             applicationEntity.status =
-                application.status || ApplicationStatus.Apply;
+                application.status ?? ApplicationStatus.Apply;
             applicationEntity.appliedDate =
-                application.appliedDate || new Date();
+                application.appliedDate ?? new Date();
 
-            const savedApplication =
+            applicationEntity =
                 await queryRunner.manager.save(applicationEntity);
             this.logger.debug(
-                `Application created successfully for Application ID: ${savedApplication.id} for Company ${savedJob.company}`,
+                `Application created successfully for Application ID: ${applicationEntity.id} for Company ${jobEntity.company}`,
             );
 
             await queryRunner.commitTransaction();
 
-            // Convert saved job to ReturnJobDto for the response
-            const jobDto = plainToInstance(ReturnJobDto, savedJob);
+            const jobDto = plainToInstance(Job, jobEntity);
             returnApplicationDto = await this.getReturnApplicationDto(
                 jobDto,
-                savedApplication,
+                applicationEntity,
             );
         } catch (error) {
             this.logger.error('Error creating application', error);
@@ -190,7 +189,7 @@ export class ApplicationsService {
     }
 
     async getReturnApplicationDto(
-        job: ReturnJobDto,
+        job: Job,
         application: Application,
     ): Promise<ReturnApplicationDto> {
         const returnApplicationDto: ReturnApplicationDto = plainToInstance(

@@ -34,21 +34,21 @@ export class JobService {
             throw error;
         }
     }
-    async getJob(id: number): Promise<ReturnJobDto> {
+    async getJob(id: number): Promise<Job> {
         const job: Job = await this.jobRepository.findOne({
             where: { id },
         });
         if (!job) {
             throw new NotFoundException(`Job with Id ${id} not found`);
         }
-        return plainToInstance(ReturnJobDto, job);
+        return plainToInstance(Job, job);
     }
-    async getJobsbyIds(jobIds: number[]): Promise<ReturnJobDto[]> {
+    async getJobsbyIds(jobIds: number[]): Promise<Job[]> {
         const jobs = await this.jobRepository.findBy({ id: In(jobIds) });
         if (!jobs || jobs.length === 0) {
             throw new NotFoundException('Jobs not found');
         }
-        return jobs.map((job) => plainToInstance(ReturnJobDto, job));
+        return jobs.map((job) => plainToInstance(Job, job));
     }
     async getAllJobs(): Promise<ReturnJobDto[]> {
         const jobs = await this.jobRepository.find({

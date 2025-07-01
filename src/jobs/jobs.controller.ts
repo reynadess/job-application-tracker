@@ -28,15 +28,6 @@ export class JobsController {
     async createJob(@Req() req, @Body() createJobDto: CreateJobDto) {
         return await this.jobsService.createJob(createJobDto, req.user.id);
     }
-
-    @UseGuards(AccessGuard)
-    @UseAbility(Actions.read, Job)
-    @Get('ids')
-    async getJobsbyIds(@Query('ids') ids: string) {
-        const jobIds = ids.split(',').map((id) => parseInt(id.trim()));
-
-        return await this.jobsService.getJobsbyIds(jobIds);
-    }
     @UseGuards(AccessGuard)
     @UseAbility(Actions.read, Job)
     @Get()
@@ -47,7 +38,7 @@ export class JobsController {
     @UseGuards(AccessGuard)
     @UseAbility(Actions.read, Job)
     @Get(':id')
-    async getJob(@Param('id', ParseIntPipe) id: number): Promise<ReturnJobDto> {
+    async getJob(@Param('id', ParseIntPipe) id: number): Promise<Job> {
         return this.jobsService.getJob(id);
     }
 
