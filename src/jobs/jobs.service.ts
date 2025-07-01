@@ -31,7 +31,7 @@ export class JobService {
             return savedJob;
         } catch (error) {
             this.logger.error(`Failed to create job : ${error.message}`);
-            throw error;
+            throw new InternalServerErrorException('Failed to create Job');
         }
     }
     async getJob(id: number): Promise<Job> {
