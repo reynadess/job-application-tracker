@@ -135,9 +135,8 @@ export class ApplicationsService {
 
             await queryRunner.commitTransaction();
 
-            const jobDto = plainToInstance(Job, jobEntity);
             returnApplicationDto = await this.getReturnApplicationDto(
-                jobDto,
+                jobEntity,
                 applicationEntity,
             );
         } catch (error) {
