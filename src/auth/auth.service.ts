@@ -45,7 +45,8 @@ export class JwtAuthService implements BaseAuthService {
         };
     }
 
-    async register(User: CreateApplicantDto): Promise<void> {
-        await this.applicantsService.createApplicant(User);
+    async register(User: CreateApplicantDto) {
+        return await this.applicantsService.createApplicant(User);
+        
     }
 }
