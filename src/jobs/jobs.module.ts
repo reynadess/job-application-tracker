@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CaslModule } from 'nest-casl';
+import { permissions } from '../applicants/applicants.permissions';
 import { Job } from './entities/job.entity';
 import { JobsController } from './jobs.controller';
 import { JobService } from './jobs.service';
-import { CaslModule } from 'nest-casl';
-import { permissions } from 'src/applicants/applicants.permissions';
+
 @Module({
     imports: [
         TypeOrmModule.forFeature([Job]),
