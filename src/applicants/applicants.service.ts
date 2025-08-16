@@ -70,9 +70,6 @@ export class ApplicantsService {
         );
 
         if (countOfApplicants > 0) {
-            this.logger.error(
-                `Applicant with username ${createApplicantDto.username} or email ${createApplicantDto.email} already exists`,
-            );
             throw new ConflictException(
                 `Applicant with username ${createApplicantDto.username} or email ${createApplicantDto.email} already exists`,
             );
@@ -123,5 +120,26 @@ export class ApplicantsService {
             applicant,
         );
         return returnApplicantDto;
+    }
+
+    /**
+     * Deletes an applicant by their username.
+     * Do not use this method lightly, as it permanently removes the applicant from the database.
+     * @param username - The username of the applicant to delete.
+     * @returns A promise that resolves when the applicant has been deleted.
+     * @throws NotFoundException if no applicant with the given username is found.
+     */
+    async deleteOne(username: string): Promise<void> {
+        const applicant = await this.applicantsRepository.findOne({
+            where: { username },
+        });
+
+        if (!applicant) {
+            throw new NotFoundException(
+                `Applicant with username ${username} not found`,
+            );
+        }
+
+        await this.applicantsRepository.remove(applicant);
     }
 }

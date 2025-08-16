@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { DataSource, Repository, UpdateResult } from 'typeorm';
+import { Job } from '../jobs/entities/job.entity';
 import { JobService } from '../jobs/jobs.service';
 import { ApplicationStatus } from './application-status.enum';
 import {
@@ -15,8 +16,6 @@ import {
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
-import { Job } from 'src/jobs/entities/job.entity';
-import { ReturnJobDto } from 'src/jobs/dto/job.dto';
 
 @Injectable()
 export class ApplicationsService {
@@ -49,9 +48,7 @@ export class ApplicationsService {
         const jobs: Job[] = await this.jobService.getJobsbyIds(jobIds);
         let returnApplications: ReturnApplicationDto[] = [];
         for (const application of applications) {
-            const job: Job = jobs.find(
-                (job) => job.id === application.jobId,
-            );
+            const job: Job = jobs.find((job) => job.id === application.jobId);
             if (job) {
                 const returnApplication: ReturnApplicationDto =
                     await this.getReturnApplicationDto(job, application);
@@ -85,9 +82,7 @@ export class ApplicationsService {
         this.logger.debug(
             `Application found successfully: ${application.id} for user ID ${userId}`,
         );
-        const job: Job = await this.jobService.getJob(
-            application.jobId,
-        );
+        const job: Job = await this.jobService.getJob(application.jobId);
         if (!job) {
             throw new NotFoundException(
                 `Job with ID ${application.jobId} not found for user ID ${userId}`,
