@@ -1,6 +1,8 @@
 import {
     Body,
     Controller,
+    HttpCode,
+    HttpStatus,
     Logger,
     Post,
     Request,
@@ -24,6 +26,7 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     @ApiBody({ type: LoginApplicantDTO })
+    @HttpCode(HttpStatus.OK)
     async login(@Request() req): Promise<{ access_token: string }> {
         this.logger.log(`Login request for User: ${req.user.username}`);
         return await this.authService.login(req.user);

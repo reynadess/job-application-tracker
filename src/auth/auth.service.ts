@@ -10,7 +10,7 @@ export type Payload = { username: string; sub: number; id: number };
 export abstract class BaseAuthService {
     abstract validateUser(username: string, password: string): Promise<User>;
     abstract login(user: User): Promise<{ access_token: string }>;
-    abstract register(User: CreateApplicantDto): Promise<any>;
+    abstract register(User: CreateApplicantDto): Promise<void>;
 }
 
 @Injectable()
