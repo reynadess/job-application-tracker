@@ -57,5 +57,6 @@ describe('AuthController (e2e)', () => {
             .expect(HttpStatus.OK);
 
         expect(response.body).toHaveProperty('access_token');
+        expect(response.body).toHaveProperty('refresh_token');
     });
 });

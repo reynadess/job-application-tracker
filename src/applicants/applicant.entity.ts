@@ -17,4 +17,7 @@ export class Applicant extends AuditEntity {
 
     @Column()
     password: string;
+
+    @Column()
+    refreshToken: string;
 }

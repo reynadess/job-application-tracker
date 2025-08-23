@@ -6,27 +6,26 @@ import { ApplicantsModule } from '../applicants/applicants.module';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard, LocalAuthGuard } from './auth.guard';
 import { BaseAuthService, JwtAuthService } from './auth.service';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtAccessStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
 @Module({
-  providers: [
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
-    { provide: BaseAuthService, useClass: JwtAuthService },
-    LocalAuthGuard,
-    LocalStrategy,
-    JwtStrategy,
-  ],
-  controllers: [AuthController],
-  imports: [
-    ApplicantsModule,
-    PassportModule,
-    JwtModule.register({
-      global: true,
-      secret: 'secretKey', // FIXME Update JWT Secret Key
-      signOptions: { expiresIn: '600s' }, // TODO Increase later
-    }),
-  ],
-  exports: [],
+    providers: [
+        { provide: APP_GUARD, useClass: JwtAuthGuard },
+        { provide: BaseAuthService, useClass: JwtAuthService },
+        LocalAuthGuard,
+        LocalStrategy,
+        JwtAccessStrategy,
+        JwtRefreshStrategy,
+    ],
+    controllers: [AuthController],
+    imports: [
+        ApplicantsModule,
+        PassportModule,
+        JwtModule.register({
+            global: true,
+        }),
+    ],
+    exports: [],
 })
 export class AuthModule {}
