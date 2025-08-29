@@ -132,6 +132,7 @@ export class ApplicantsService {
     async deleteOne(username: string): Promise<void> {
         const applicant = await this.applicantsRepository.findOne({
             where: { username },
+            select: { id: true, username: true },
         });
 
         if (!applicant) {
@@ -141,5 +142,23 @@ export class ApplicantsService {
         }
 
         await this.applicantsRepository.remove(applicant);
+    }
+
+    async updateRefreshToken(userId: number, refreshToken: string | null) {
+        const applicant: Applicant | undefined =
+            await this.applicantsRepository.findOne({
+                where: { id: userId },
+                select: { id: true, username: true, refreshToken: true },
+            });
+
+        if (!applicant) {
+            throw new NotFoundException(
+                `Applicant with id ${userId} not found`,
+            );
+        }
+
+        applicant.refreshToken = refreshToken;
+
+        await this.applicantsRepository.save(applicant);
     }
 }
