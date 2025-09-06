@@ -11,6 +11,13 @@ export type Payload = { username: string; sub: number; id: number };
 export abstract class BaseAuthService {
     abstract logout(userId: number): Promise<void>;
     abstract validateUser(username: string, password: string): Promise<User>;
+
+    /**
+     * Authenticates the given user and generates both access and refresh tokens.
+     *
+     * @param user - The user entity for whom the tokens are to be generated.
+     * @returns A promise that resolves to an object containing the generated `access_token` and `refresh_token`.
+     */
     abstract login(user: User): Promise<ReturnAuthDTO>;
     abstract register(User: CreateApplicantDto): Promise<void>;
     abstract jwtRefreshToken(user: User): Promise<ReturnAuthDTO>;

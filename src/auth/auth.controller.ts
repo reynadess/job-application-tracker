@@ -49,11 +49,11 @@ export class AuthController {
     }
 
     @UseGuards(JwtRefreshStrategy)
-    @Post('jwt/refresh')
+    @Post('refresh')
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     @Public()
-    // This endpoint is public because clients may only have a refresh token (not an access token) when requesting a new acces token JWT.
+    // This endpoint is public because clients will be sending a refresh token (not an access token) when requesting a new access token JWT.
     async jwtRefreshToken(@Request() req): Promise<ReturnAuthDTO> {
         return await this.authService.jwtRefreshToken(req.user);
     }
