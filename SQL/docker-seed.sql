@@ -39,6 +39,7 @@ CREATE TABLE public.applicants (
     "lastName" text NOT NULL,
     "email" domain_email UNIQUE NOT NULL,
     "password" text NOT NULL,
+    "refreshToken" text,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
     "updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
     "deletedAt" timestamp with time zone DEFAULT NULL
