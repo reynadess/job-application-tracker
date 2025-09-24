@@ -14,12 +14,6 @@ async function bootstrap() {
         origin: 'http://localhost:5173',
         credentials: true,
     }); // TODO Update this for production
-    
-    app.useGlobalInterceptors(
-        new ClassSerializerInterceptor(app.get(Reflector), {
-            excludeExtraneousValues: true,
-        }),
-    );
 
     const logger = new Logger('Main');
     // Swagger OpenAPI
