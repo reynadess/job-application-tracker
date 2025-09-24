@@ -1,7 +1,6 @@
 import {
     ClassSerializerInterceptor,
     Logger,
-    ValidationPipe,
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -10,20 +9,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix('api');
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
     app.enableCors({
         origin: 'http://localhost:5173',
         credentials: true,
     }); // TODO Update this for production
-    app.useGlobalInterceptors(
-        new ClassSerializerInterceptor(app.get(Reflector), {
-            excludeExtraneousValues: true,
-        }),
-    );
-    //validation pipes globally
-    app.useGlobalPipes(
-        new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-    );
+
     const logger = new Logger('Main');
     // Swagger OpenAPI
     const options = new DocumentBuilder()
