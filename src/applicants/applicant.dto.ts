@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 import { IsStrongPassword } from '../common/decorators/password-validation.decorator';
 
 export class CreateApplicantDto {
@@ -25,17 +25,14 @@ export class CreateApplicantDto {
     @Expose()
     email: string;
 
-    @IsString()
-    @MinLength(8, { message: 'Password must be at least 8 characters long' })
-    @MaxLength(128, { message: 'Password must not exceed 128 characters' })
     @IsStrongPassword({
         minLength: 8,
-        maxLength: 128,
+        maxLength: 64,
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
         requireSpecialChars: true,
-    }, { message: 'Password must be 8-128 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character' })
+    }, { message: 'Password must be 8-64 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character' })
     @Expose()
     password: string;
 }

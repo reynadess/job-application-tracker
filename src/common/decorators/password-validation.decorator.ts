@@ -23,7 +23,7 @@ export class IsStrongPasswordConstraint implements ValidatorConstraintInterface 
         
         const {
             minLength = 8,
-            maxLength = 128,
+            maxLength = 64,
             requireUppercase = true,
             requireLowercase = true,
             requireNumbers = true,
@@ -70,7 +70,7 @@ export class IsStrongPasswordConstraint implements ValidatorConstraintInterface 
         const options: PasswordValidationOptions = args.constraints[0] || {};
         const {
             minLength = 8,
-            maxLength = 128,
+            maxLength = 64,
             requireUppercase = true,
             requireLowercase = true,
             requireNumbers = true,

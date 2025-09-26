@@ -5,7 +5,7 @@ import { IsStrongPassword } from './password-validation.decorator';
 class TestDto {
     @IsStrongPassword({
         minLength: 8,
-        maxLength: 128,
+        maxLength: 64,
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
@@ -108,7 +108,7 @@ describe('IsStrongPassword Decorator', () => {
         });
 
         it('should reject password that is too long', async () => {
-            testDto.password = 'A'.repeat(126) + 'a1!'; // 130 characters
+            testDto.password = 'A'.repeat(62) + 'a1!'; // 66 characters (exceeds 64 limit)
             const errors = await validate(testDto);
             expect(errors.length).toBeGreaterThan(0);
             expect(errors[0].constraints).toHaveProperty('IsStrongPasswordConstraint');
@@ -170,7 +170,7 @@ describe('IsStrongPassword Decorator', () => {
             const errors = await validate(testDto);
             expect(errors).toHaveLength(1);
             expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('Password must');
-            expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('8-128 characters long');
+            expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('8-64 characters long');
             expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('uppercase letter');
             expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('lowercase letter');
             expect(errors[0].constraints.IsStrongPasswordConstraint).toContain('number');
