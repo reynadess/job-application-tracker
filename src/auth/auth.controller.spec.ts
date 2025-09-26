@@ -37,7 +37,7 @@ describe('AuthController (e2e)', () => {
         firstName: 'Test',
         lastName: 'User',
         email: 'test@example.com',
-        password: 'testpass',
+        password: 'TestPass123!', // Strong password for testing
     };
 
     beforeAll(async () => {
@@ -123,6 +123,76 @@ describe('AuthController (e2e)', () => {
         await request(app.getHttpServer())
             .post('/auth/register')
             .send(invalidUser)
+            .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('/auth/register (POST) should reject weak password and return BadRequestException', async () => {
+        const weakPasswordUser: CreateApplicantDto = {
+            ...testUser,
+            username: 'weakpassuser',
+            email: 'weak@example.com',
+            password: 'weak', // Too weak - missing requirements
+        };
+
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(weakPasswordUser)
+            .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('/auth/register (POST) should reject password without uppercase and return BadRequestException', async () => {
+        const noUppercaseUser: CreateApplicantDto = {
+            ...testUser,
+            username: 'noupperuser',
+            email: 'noupper@example.com',
+            password: 'password123!', // Missing uppercase
+        };
+
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(noUppercaseUser)
+            .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('/auth/register (POST) should reject password without numbers and return BadRequestException', async () => {
+        const noNumbersUser: CreateApplicantDto = {
+            ...testUser,
+            username: 'nonumberuser',
+            email: 'nonumber@example.com',
+            password: 'Password!', // Missing numbers
+        };
+
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(noNumbersUser)
+            .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('/auth/register (POST) should reject password without special characters and return BadRequestException', async () => {
+        const noSpecialUser: CreateApplicantDto = {
+            ...testUser,
+            username: 'nospecialuser',
+            email: 'nospecial@example.com',
+            password: 'Password123', // Missing special characters
+        };
+
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(noSpecialUser)
+            .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('/auth/register (POST) should reject password that is too short and return BadRequestException', async () => {
+        const shortPasswordUser: CreateApplicantDto = {
+            ...testUser,
+            username: 'shortpassuser',
+            email: 'short@example.com',
+            password: 'Pass1!', // Too short (6 chars)
+        };
+
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(shortPasswordUser)
             .expect(HttpStatus.BAD_REQUEST);
     });
 

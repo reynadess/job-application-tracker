@@ -4,6 +4,7 @@ import { CreateApplicantDto } from '../applicants/applicant.dto';
 import { Applicant } from '../applicants/applicant.entity';
 import { ApplicantsService } from '../applicants/applicants.service';
 import { ReturnAuthDTO } from './auth.dto';
+import { PasswordService } from './password.service';
 
 export type User = { username: string; userId: number };
 export type Payload = { username: string; sub: number; id: number };
@@ -28,6 +29,7 @@ export class JwtAuthService implements BaseAuthService {
     constructor(
         private readonly applicantsService: ApplicantsService,
         private readonly jwtService: JwtService,
+        private readonly passwordService: PasswordService,
     ) {}
 
     /**
@@ -58,8 +60,14 @@ export class JwtAuthService implements BaseAuthService {
         return returnAuthDto;
     }
 
-    async register(User: CreateApplicantDto): Promise<void> {
-        await this.applicantsService.createApplicant(User);
+    async register(user: CreateApplicantDto): Promise<void> {
+        // Hash the password before storing
+        const hashedPassword = await this.passwordService.hashPassword(user.password);
+        const userWithHashedPassword = {
+            ...user,
+            password: hashedPassword,
+        };
+        await this.applicantsService.createApplicant(userWithHashedPassword);
     }
 
     async logout(userId: number): Promise<void> {
@@ -74,12 +82,19 @@ export class JwtAuthService implements BaseAuthService {
         const user: Applicant | undefined =
             await this.applicantsService.findOne(username);
         if (!user) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Invalid credentials');
         }
-        const isMatch: boolean = user.password === password; // TODO Hashing
+        
+        // Use bcrypt to compare the provided password with the hashed password
+        const isMatch: boolean = await this.passwordService.comparePasswords(
+            password,
+            user.password,
+        );
+        
         if (!isMatch) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Invalid credentials');
         }
+        
         // TODO Should think about roles for user
         return { username: user.username, userId: user.id };
     }
