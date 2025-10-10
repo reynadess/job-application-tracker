@@ -84,6 +84,100 @@ export class ApplicantsService {
         return true;
     }
 
+    /**
+     * Check if a username is available for registration
+     * @param username - The username to check
+     * @returns Promise<boolean> - True if username is available, false if taken
+     */
+    async isUsernameAvailable(username: string): Promise<boolean> {
+        const existingUser = await this.applicantsRepository.findOne({
+            where: { username },
+        });
+        return !existingUser;
+    }
+
+    /**
+     * Check if an email is available for registration
+     * @param email - The email to check
+     * @returns Promise<boolean> - True if email is available, false if taken
+     */
+    async isEmailAvailable(email: string): Promise<boolean> {
+        const existingUser = await this.applicantsRepository.findOne({
+            where: { email },
+        });
+        return !existingUser;
+    }
+
+    /**
+     * Get detailed availability status for username and email
+     * @param username - The username to check
+     * @param email - The email to check
+     * @returns Promise with availability details
+     */
+    async checkAvailability(username?: string, email?: string): Promise<{
+        usernameAvailable?: boolean;
+        emailAvailable?: boolean;
+        suggestions?: string[];
+    }> {
+        const result: {
+            usernameAvailable?: boolean;
+            emailAvailable?: boolean;
+            suggestions?: string[];
+        } = {};
+
+        if (username) {
+            result.usernameAvailable = await this.isUsernameAvailable(username);
+            
+            // Generate username suggestions if not available
+            if (!result.usernameAvailable) {
+                result.suggestions = await this.generateUsernameSuggestions(username);
+            }
+        }
+
+        if (email) {
+            result.emailAvailable = await this.isEmailAvailable(email);
+        }
+
+        return result;
+    }
+
+    /**
+     * Generate username suggestions based on the original username
+     * @param originalUsername - The original username that's taken
+     * @returns Promise<string[]> - Array of suggested usernames
+     */
+    private async generateUsernameSuggestions(originalUsername: string): Promise<string[]> {
+        const suggestions: string[] = [];
+        const baseUsername = originalUsername.toLowerCase();
+        
+        // Try with numbers
+        for (let i = 1; i <= 5; i++) {
+            const suggestion = `${baseUsername}${i}`;
+            if (await this.isUsernameAvailable(suggestion)) {
+                suggestions.push(suggestion);
+            }
+        }
+
+        // Try with random numbers
+        for (let i = 0; i < 3 && suggestions.length < 5; i++) {
+            const randomNum = Math.floor(Math.random() * 9999) + 1;
+            const suggestion = `${baseUsername}${randomNum}`;
+            if (await this.isUsernameAvailable(suggestion)) {
+                suggestions.push(suggestion);
+            }
+        }
+
+        // Try with underscore and numbers
+        for (let i = 1; i <= 3 && suggestions.length < 5; i++) {
+            const suggestion = `${baseUsername}_${i}`;
+            if (await this.isUsernameAvailable(suggestion)) {
+                suggestions.push(suggestion);
+            }
+        }
+
+        return suggestions.slice(0, 5); // Return max 5 suggestions
+    }
+
     async updateOne(
         username: string,
         updateApplicantDto: UpdateApplicantDto,
