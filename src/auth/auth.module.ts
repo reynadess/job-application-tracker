@@ -8,6 +8,7 @@ import { JwtAuthGuard, LocalAuthGuard } from './auth.guard';
 import { BaseAuthService, JwtAuthService } from './auth.service';
 import { JwtAccessStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
+import { PasswordService } from './password.service';
 
 @Module({
     providers: [
@@ -17,6 +18,7 @@ import { LocalStrategy } from './local.strategy';
         LocalStrategy,
         JwtAccessStrategy,
         JwtRefreshStrategy,
+        PasswordService,
     ],
     controllers: [AuthController],
     imports: [
