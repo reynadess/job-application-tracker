@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { AuditEntity } from '../common/entity/audit.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity('applicants')
 export class Applicant extends AuditEntity {
@@ -17,6 +18,16 @@ export class Applicant extends AuditEntity {
 
     @Column()
     password: string;
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    async hashPassword() {
+        // Hash the password before saving to the database
+        if (this.password) {
+            const saltRounds = 10;
+            this.password = await bcrypt.hash(this.password, saltRounds);
+        }
+    }
 
     @Column()
     refreshToken: string;

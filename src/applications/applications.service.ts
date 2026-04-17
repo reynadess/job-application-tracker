@@ -1,5 +1,6 @@
 import {
     Injectable,
+    InternalServerErrorException,
     Logger,
     NotFoundException,
     UnprocessableEntityException,
@@ -42,11 +43,15 @@ export class ApplicationsService {
                     updatedAt: 'DESC',
                 },
             });
+
         const jobIds: number[] = applications.map(
             (application) => application.jobId,
         );
+
         const jobs: Job[] = await this.jobService.getJobsbyIds(jobIds);
+
         let returnApplications: ReturnApplicationDto[] = [];
+
         for (const application of applications) {
             const job: Job = jobs.find((job) => job.id === application.jobId);
             if (job) {
@@ -119,8 +124,10 @@ export class ApplicationsService {
             applicationEntity.userId = userId;
             applicationEntity.status =
                 application.status ?? ApplicationStatus.Apply;
-            applicationEntity.appliedDate =
-                application.appliedDate ?? new Date();
+
+            if (application.appliedDate) {
+                applicationEntity.appliedDate = application.appliedDate;
+            }
 
             applicationEntity =
                 await queryRunner.manager.save(applicationEntity);
@@ -137,7 +144,9 @@ export class ApplicationsService {
         } catch (error) {
             this.logger.error('Error creating application', error);
             await queryRunner.rollbackTransaction();
-            throw error;
+            throw new InternalServerErrorException(
+                'Failed to create job application',
+            );
         } finally {
             await queryRunner.release();
         }
@@ -148,7 +157,7 @@ export class ApplicationsService {
     async updateApplication(
         id: number,
         updateApplicationDto: UpdateApplicationDto,
-    ): Promise<ReturnApplicationDto> {
+    ): Promise<Boolean> {
         let application: Application =
             await this.applicationsReposirtory.findOne({
                 where: { id },
@@ -165,11 +174,12 @@ export class ApplicationsService {
             ...application,
             ...updateApplicationPlainObject,
         });
-        const savedApplication =
-            await this.applicationsReposirtory.save(application);
-        const returnApplicationDto: ReturnApplicationDto =
-            await this.getReturnApplicationDto(undefined, savedApplication);
-        return returnApplicationDto;
+
+        await this.applicationsReposirtory.save(application);
+
+        this.logger.debug(`Application with ID ${id} updated successfully`);
+
+        return true;
     }
 
     async deleteApplication(id: number): Promise<boolean> {

@@ -4,6 +4,7 @@ import { CreateApplicantDto } from '../applicants/applicant.dto';
 import { Applicant } from '../applicants/applicant.entity';
 import { ApplicantsService } from '../applicants/applicants.service';
 import { ReturnAuthDTO } from './auth.dto';
+import * as bcrypt from 'bcrypt';
 
 export type User = { username: string; userId: number };
 export type Payload = { username: string; sub: number; id: number };
@@ -63,6 +64,7 @@ export class JwtAuthService implements BaseAuthService {
     }
 
     async logout(userId: number): Promise<void> {
+        // Invalidate the refresh token by setting it to null in the database
         await this.applicantsService.updateRefreshToken(userId, null);
     }
 
@@ -73,15 +75,16 @@ export class JwtAuthService implements BaseAuthService {
     async validateUser(username: string, password: string): Promise<User> {
         const user: Applicant | undefined =
             await this.applicantsService.findOne(username);
+
         if (!user) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Invalid username or password');
         }
-        const isMatch: boolean = user.password === password; // TODO Hashing
-        if (!isMatch) {
-            throw new UnauthorizedException();
+
+        if (await bcrypt.compare(password, user.password)) {
+            return { username: user.username, userId: user.id };
+        } else {
+            throw new UnauthorizedException('Invalid username or password');
         }
-        // TODO Should think about roles for user
-        return { username: user.username, userId: user.id };
     }
 
     async getAccessToken(user: User): Promise<string> {
