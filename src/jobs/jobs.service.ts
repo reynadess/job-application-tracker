@@ -30,7 +30,7 @@ export class JobService {
             this.logger.log(`Job created with ID : ${savedJob.id}`);
             return savedJob;
         } catch (error) {
-            this.logger.error(`Failed to create job : ${error.message}`);
+            this.logger.error(`Failed to create job : ${error}`);
             throw new InternalServerErrorException('Failed to create Job');
         }
     }

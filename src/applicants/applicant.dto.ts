@@ -19,7 +19,6 @@ export class CreateApplicantDto {
     @Expose()
     email: string;
 
-    // TODO - Password Validation
     @IsStrongPassword({
         minLength: 8,
         minLowercase: 1,

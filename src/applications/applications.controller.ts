@@ -55,8 +55,8 @@ export class ApplicationsController {
     async updateApplication(
         @Param('id') id: number,
         @Body() updateApplicationDto: UpdateApplicationDto,
-    ): Promise<ReturnApplicationDto> {
-        return await this.applicationsService.updateApplication(
+    ) {
+        await this.applicationsService.updateApplication(
             id,
             updateApplicationDto,
         );
