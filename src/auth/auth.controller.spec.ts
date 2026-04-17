@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../app.module';
 import { CreateApplicantDto } from '../applicants/applicant.dto';
 import { ApplicantsService } from '../applicants/applicants.service';
@@ -37,7 +37,7 @@ describe('AuthController (e2e)', () => {
         firstName: 'Test',
         lastName: 'User',
         email: 'test@example.com',
-        password: 'testpass',
+        password: 'Testpass123!',
     };
 
     beforeAll(async () => {
@@ -48,10 +48,25 @@ describe('AuthController (e2e)', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
 
-        await request(app.getHttpServer())
-            .post('/auth/register')
-            .send(testUser)
-            .expect(HttpStatus.CREATED);
+        try {
+            const res = await request(app.getHttpServer())
+                .post('/auth/register')
+                .send(testUser);
+
+            if (res.status !== HttpStatus.CREATED) {
+                console.error('Registration failed:', {
+                    status: res.status,
+                    body: res.body,
+                    text: res.text,
+                });
+                throw new Error(
+                    `Registration failed with status ${res.status}, message ${res.text}`,
+                );
+            }
+        } catch (err) {
+            console.error('Error during test user registration:', err);
+            throw err;
+        }
     });
 
     afterAll(async () => {

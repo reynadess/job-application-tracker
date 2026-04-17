@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
 
 export class CreateApplicantDto {
     @IsString()
@@ -20,8 +20,14 @@ export class CreateApplicantDto {
     email: string;
 
     // TODO - Password Validation
-    @IsString()
-    @Expose()
+    @IsStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+    })
+    @Expose({ toClassOnly: true })
     password: string;
 }
 
