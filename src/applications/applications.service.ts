@@ -125,10 +125,6 @@ export class ApplicationsService {
             applicationEntity.status =
                 application.status ?? ApplicationStatus.Apply;
 
-            if (application.appliedDate) {
-                applicationEntity.appliedDate = application.appliedDate;
-            }
-
             applicationEntity =
                 await queryRunner.manager.save(applicationEntity);
             this.logger.debug(

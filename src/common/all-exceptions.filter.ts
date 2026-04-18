@@ -7,6 +7,7 @@ import {
     Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -15,28 +16,54 @@ export class AllExceptionsFilter implements ExceptionFilter {
     constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
     catch(exception: unknown, host: ArgumentsHost): void {
-        // In certain situations `httpAdapter` might not be available in the
-        // constructor method, thus we should resolve it here.
         const { httpAdapter } = this.httpAdapterHost;
-
         const ctx = host.switchToHttp();
 
-        this.logger.error(
-            `Unhandled exception: ${exception instanceof Error ? exception.message : String(exception)}`,
-            exception instanceof Error ? exception.stack : '',
-        );
+        let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        let message = 'Internal server error';
 
-        const httpStatus =
-            exception instanceof HttpException
-                ? exception.getStatus()
-                : HttpStatus.INTERNAL_SERVER_ERROR;
+        if (exception instanceof HttpException) {
+            // Handles all NestJS HTTP exceptions
+            httpStatus = exception.getStatus();
+            const response = exception.getResponse();
+            message =
+                typeof response === 'string'
+                    ? response
+                    : ((response as any).message ?? exception.message);
+        } else if (exception instanceof QueryFailedError) {
+            // Handles TypeORM DB errors
+            httpStatus = HttpStatus.BAD_REQUEST;
+            message = this.getQueryErrorMessage(exception);
+            this.logger.error(`QueryFailedError: ${exception.message}`);
+        } else if (exception instanceof Error) {
+            // Handles all other JS/Node errors
+            message = exception.message;
+            this.logger.error(`Unhandled Error: ${exception.message}`);
+        }
 
         const responseBody = {
             statusCode: httpStatus,
             timestamp: new Date().toISOString(),
             path: httpAdapter.getRequestUrl(ctx.getRequest()),
+            message,
         };
 
         httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    }
+
+    private getQueryErrorMessage(exception: QueryFailedError): string {
+        const code = (exception as any).driverError?.code;
+        switch (code) {
+            case '22007':
+                return 'Invalid date/time format provided';
+            case '23505':
+                return 'Duplicate entry — record already exists';
+            case '23503':
+                return 'Foreign key constraint violation';
+            case '23502':
+                return 'Not null constraint violation';
+            default:
+                return 'A database error occurred';
+        }
     }
 }
