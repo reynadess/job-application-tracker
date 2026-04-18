@@ -49,9 +49,6 @@ export class CreateApplicationDto {
 
     @IsEnum(ApplicationStatus)
     status: ApplicationStatus;
-
-    @IsOptional()
-    appliedDate: Date;
 }
 
 export class ReturnApplicationDto extends PartialType(CreateApplicationDto) {
@@ -77,8 +74,4 @@ export class ReturnApplicationDto extends PartialType(CreateApplicationDto) {
     @IsOptional()
     @IsNumber()
     ctcOffered?: number;
-
-    @Expose()
-    @IsOptional()
-    appliedDate?: Date;
 }

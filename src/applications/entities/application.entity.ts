@@ -17,7 +17,4 @@ export class Application extends AuditEntity {
 
     @Column({ nullable: false })
     jobId: number;
-
-    @Column({ type: 'timestamptz' })
-    appliedDate: Date;
 }
