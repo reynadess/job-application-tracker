@@ -16,6 +16,7 @@ import { Job } from './entities/job.entity';
 import { JobService } from './jobs.service';
 import { CreateJobDto, ReturnJobDto, UpdateJobDto } from './dto/job.dto';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
+import { QueryDto } from 'src/common/dto/Query.dto';
 
 @ApiBearerAuth()
 @Controller('jobs')
@@ -31,8 +32,8 @@ export class JobsController {
     @UseGuards(AccessGuard)
     @UseAbility(Actions.read, Job)
     @Get()
-    async getAllJobs(): Promise<ReturnJobDto[]> {
-        return this.jobsService.getAllJobs();
+    async getAllJobs(@Query() queryDto: QueryDto): Promise<ReturnJobDto[]> {
+        return this.jobsService.getAllJobs(queryDto);
     }
 
     @UseGuards(AccessGuard)
