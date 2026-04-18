@@ -17,6 +17,7 @@ import {
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
+import { QueryDto } from 'src/common/dto/Query.dto';
 
 @Injectable()
 export class ApplicationsService {
@@ -31,9 +32,14 @@ export class ApplicationsService {
 
     async getApplications(
         userId: number,
-        skip = 0,
-        take = 100,
+        queryDto: QueryDto,
     ): Promise<ReturnApplicationDto[]> {
+        const page = Math.min(queryDto.page, 50);
+        const limit = Math.min(queryDto.limit, 100);
+
+        const skip = (page - 1) * limit;
+        const take = limit;
+
         const applications: Application[] =
             await this.applicationsReposirtory.find({
                 where: { userId },

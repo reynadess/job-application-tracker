@@ -11,6 +11,7 @@ import { CreateJobDto, ReturnJobDto, UpdateJobDto } from './dto/job.dto';
 import { Job } from './entities/job.entity';
 import { JobStatus } from './job-status.enum';
 import { plainToInstance } from 'class-transformer';
+import { QueryDto } from 'src/common/dto/Query.dto';
 
 @Injectable()
 export class JobService {
@@ -50,8 +51,17 @@ export class JobService {
         }
         return jobs.map((job) => plainToInstance(Job, job));
     }
-    async getAllJobs(): Promise<ReturnJobDto[]> {
+    async getAllJobs(queryDto: QueryDto): Promise<ReturnJobDto[]> {
+        let { page, limit } = queryDto;
+        page = Math.min(queryDto.page, 50);
+        limit = Math.min(queryDto.limit, 100);
+
+        const skip = (page - 1) * limit;
+        const take = limit;
+
         const jobs = await this.jobRepository.find({
+            skip: skip,
+            take: take,
             order: { createdAt: 'DESC' },
         });
 

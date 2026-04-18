@@ -6,6 +6,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     Req,
     UseGuards,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import {
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
+import { QueryDto } from 'src/common/dto/Query.dto';
 
 @Controller('applications')
 @ApiBearerAuth()
@@ -48,8 +50,14 @@ export class ApplicationsController {
     @UseGuards(AccessGuard)
     @UseAbility(Actions.read, Application)
     @Get()
-    async getApplications(@Req() req): Promise<ReturnApplicationDto[]> {
-        return await this.applicationsService.getApplications(req.user.id);
+    async getApplications(
+        @Req() req,
+        @Query() queryDto: QueryDto,
+    ): Promise<ReturnApplicationDto[]> {
+        return await this.applicationsService.getApplications(
+            req.user.id,
+            queryDto,
+        );
     }
 
     @UseGuards(AccessGuard)

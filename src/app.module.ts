@@ -56,6 +56,9 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
             useValue: new ValidationPipe({
                 transform: true,
                 forbidNonWhitelisted: true,
+                transformOptions: {
+                    enableImplicitConversion: true,
+                },
             }),
         },
         { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
