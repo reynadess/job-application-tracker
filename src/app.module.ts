@@ -1,4 +1,8 @@
-import { ClassSerializerInterceptor, Module, ValidationPipe } from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    Module,
+    ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from 'nest-casl';
@@ -10,37 +14,52 @@ import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { JobsModule } from './jobs/jobs.module';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 @Module({
-  imports: [
-    AuthModule,
-    ApplicantsModule,
-    JobsModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('database.host', 'localhost'),
-        port: configService.get<number>('database.port', 5432),
-        username: configService.get<string>('database.username', 'postgres'),
-        password: configService.get<string>('database.password', 'postgres'),
-        database: configService.get<string>(
-          'database.name',
-          'JobApplicationTracker',
-        ),
-        autoLoadEntities: true,
-      }),
-      inject: [ConfigService],
-    }),
-    CaslModule.forRoot<Roles>({}),
-    ApplicationsModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService,
-    { provide: APP_PIPE, useValue: new ValidationPipe({ transform: true, forbidNonWhitelisted: true }) },
-    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
-  ],
+    imports: [
+        AuthModule,
+        ApplicantsModule,
+        JobsModule,
+        ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.get<string>('database.host', 'localhost'),
+                port: configService.get<number>('database.port', 5432),
+                username: configService.get<string>(
+                    'database.username',
+                    'postgres',
+                ),
+                password: configService.get<string>(
+                    'database.password',
+                    'postgres',
+                ),
+                database: configService.get<string>(
+                    'database.name',
+                    'JobApplicationTracker',
+                ),
+                autoLoadEntities: true,
+            }),
+            inject: [ConfigService],
+        }),
+        CaslModule.forRoot<Roles>({}),
+        ApplicationsModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        AppService,
+        {
+            provide: APP_PIPE,
+            useValue: new ValidationPipe({
+                transform: true,
+                forbidNonWhitelisted: true,
+            }),
+        },
+        { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+        { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    ],
 })
 export class AppModule {}
