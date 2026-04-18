@@ -32,7 +32,10 @@ export class ApplicationsController {
         @Req() req,
         @Body() createApplicationDto: CreateApplicationDto,
     ) {
-        this.applicationsService.create(createApplicationDto, req.user.id);
+        await this.applicationsService.create(
+            createApplicationDto,
+            req.user.id,
+        );
     }
 
     @UseGuards(AccessGuard)
