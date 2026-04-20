@@ -36,9 +36,9 @@ export class AuthController {
     @Post('register')
     @ApiBody({ type: CreateApplicantDto })
     @Public()
-    async register(@Body() user: CreateApplicantDto) {
+    async register(@Body() user: CreateApplicantDto): Promise<ReturnAuthDTO> {
         this.logger.log(`Register request for User: ${user.username}`);
-        await this.authService.register(user);
+        return await this.authService.register(user);
     }
 
     @Post('logout')

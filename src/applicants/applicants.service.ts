@@ -23,9 +23,9 @@ export class ApplicantsService {
         private readonly applicantsRepository: Repository<Applicant>,
     ) {}
 
-    async findOne(username: string): Promise<Applicant | undefined> {
+    async findOne(username: string): Promise<Applicant> {
         const applicant: Applicant = await this.applicantsRepository.findOne({
-            where: { username },
+            where: { username: username },
         });
 
         if (!applicant) {
@@ -59,7 +59,7 @@ export class ApplicantsService {
 
     async createApplicant(
         createApplicantDto: CreateApplicantDto,
-    ): Promise<boolean> {
+    ): Promise<Applicant> {
         const countOfApplicants: number = await this.applicantsRepository.count(
             {
                 where: [
@@ -80,8 +80,8 @@ export class ApplicantsService {
             createApplicantDto,
         );
         applicant = this.applicantsRepository.create(applicant);
-        await this.applicantsRepository.save(applicant);
-        return true;
+        applicant = await this.applicantsRepository.save(applicant);
+        return applicant;
     }
 
     async updateOne(
