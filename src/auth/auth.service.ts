@@ -20,7 +20,7 @@ export abstract class BaseAuthService {
      * @returns A promise that resolves to an object containing the generated `access_token` and `refresh_token`.
      */
     abstract login(user: User): Promise<ReturnAuthDTO>;
-    abstract register(User: CreateApplicantDto): Promise<void>;
+    abstract register(User: CreateApplicantDto): Promise<ReturnAuthDTO>;
     abstract jwtRefreshToken(user: User): Promise<ReturnAuthDTO>;
 }
 
@@ -38,12 +38,16 @@ export class JwtAuthService implements BaseAuthService {
      * @returns A promise that resolves to an object containing the generated `access_token` and `refresh_token`.
      */
     async login(user: User): Promise<ReturnAuthDTO> {
+        const applicantPromise: Promise<Applicant> =
+            this.applicantsService.findOne(user.username);
+
         const accessTokenPromise = this.getAccessToken(user);
         const refreshTokenPromise = this.getRefreshToken(user);
 
-        const [accessToken, refreshToken] = await Promise.all([
+        const [accessToken, refreshToken, applicant] = await Promise.all([
             accessTokenPromise,
             refreshTokenPromise,
+            applicantPromise,
         ]);
 
         await this.applicantsService.updateRefreshToken(
@@ -54,13 +58,22 @@ export class JwtAuthService implements BaseAuthService {
         const returnAuthDto: ReturnAuthDTO = {
             access_token: accessToken,
             refresh_token: refreshToken,
+            userId: applicant.id,
+            username: applicant.username,
+            firstName: applicant.firstName,
+            lastName: applicant.lastName,
+            email: applicant.email,
         };
 
         return returnAuthDto;
     }
 
-    async register(User: CreateApplicantDto): Promise<void> {
-        await this.applicantsService.createApplicant(User);
+    async register(User: CreateApplicantDto): Promise<ReturnAuthDTO> {
+        const applicant = await this.applicantsService.createApplicant(User);
+        return await this.login({
+            username: applicant.username,
+            userId: applicant.id,
+        });
     }
 
     async logout(userId: number): Promise<void> {
