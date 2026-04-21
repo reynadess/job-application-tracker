@@ -4,9 +4,9 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { CreateApplicantDto } from 'src/applicants/applicant.dto';
 import { ApplicantsService } from 'src/applicants/applicants.service';
-import { CreateApplicationDto } from './dto/create-application.dto';
-import { ApplicationStatus } from './application-status.enum';
-import { Application } from './entities/application.entity';
+import { CreateApplicationDto } from 'src/applications/dto/create-application.dto';
+import { ApplicationStatus } from 'src/applications/application-status.enum';
+import { Application } from 'src/applications/entities/application.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm/dist/common/typeorm.utils';
 

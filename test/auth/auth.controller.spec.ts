@@ -1,9 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../app.module';
-import { CreateApplicantDto } from '../applicants/applicant.dto';
-import { ApplicantsService } from '../applicants/applicants.service';
+import { AppModule } from 'src/app.module';
+import { CreateApplicantDto } from 'src/applicants/applicant.dto';
+import { ApplicantsService } from 'src/applicants/applicants.service';
 
 /**
  * End-to-end tests for the AuthController.
