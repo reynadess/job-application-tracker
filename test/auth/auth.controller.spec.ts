@@ -40,6 +40,8 @@ describe('AuthController (e2e)', () => {
         password: 'Testpass123!',
     };
 
+    let createdApplicant: ReturnAuthDTO;
+
     beforeAll(async () => {
         moduleFixture = await Test.createTestingModule({
             imports: [AppModule],
@@ -48,20 +50,12 @@ describe('AuthController (e2e)', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
 
-        try {
-            const res = await request(app.getHttpServer())
-                .post('/auth/register')
-                .send(testUser);
+        const res: Response = await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(testUser)
+            .expect(HttpStatus.CREATED);
 
-            if (res.status !== HttpStatus.CREATED) {
-                throw new Error(
-                    `Registration failed with status ${res.status}, message ${res.text}`,
-                );
-            }
-        } catch (err) {
-            console.error('Error during test user registration:', err);
-            throw err;
-        }
+        createdApplicant = res.body;
     });
 
     afterAll(async () => {
@@ -155,5 +149,46 @@ describe('AuthController (e2e)', () => {
 
         expect(jwtRefreshResponse.body).toHaveProperty('access_token');
         expect(jwtRefreshResponse.body).toHaveProperty('refresh_token');
+    });
+
+    it('/auth/register (POST) should call register and return 201 with userdata and jwt tokens', async () => {
+        const newUser: CreateApplicantDto = {
+            username: 'someuser',
+            firstName: 'someuser',
+            lastName: 'someuser',
+            email: 'someuser@example.com',
+            password: 'Somepass123!',
+        };
+
+        try {
+            const response = await request(app.getHttpServer())
+                .post('/auth/register')
+                .send(newUser)
+                .expect(HttpStatus.CREATED)
+                .expect((res: Response) => {
+                    expect(res.body).toHaveProperty(
+                        'username',
+                        newUser.username,
+                    );
+                    expect(res.body).toHaveProperty('email', newUser.email);
+                    expect(res.body).toHaveProperty(
+                        'firstName',
+                        newUser.firstName,
+                    );
+                    expect(res.body).toHaveProperty(
+                        'lastName',
+                        newUser.lastName,
+                    );
+                    expect(res.body).toHaveProperty('userId');
+                    expect(res.body).toHaveProperty('access_token');
+                    expect(res.body).toHaveProperty('refresh_token');
+                });
+        } finally {
+            const applicantsRepository = moduleFixture.get<
+                Repository<Applicant>
+            >(getRepositoryToken(Applicant));
+
+            applicantsRepository.delete({ username: newUser.username });
+        }
     });
 });
