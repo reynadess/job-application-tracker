@@ -32,13 +32,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
                     : ((response as any).message ?? exception.message);
         } else if (exception instanceof QueryFailedError) {
             // Handles TypeORM DB errors
-            httpStatus = HttpStatus.BAD_REQUEST;
             message = this.getQueryErrorMessage(exception);
-            this.logger.error(`QueryFailedError: ${exception.message}`);
+            this.logger.error(
+                `QueryFailedError: ${JSON.stringify(exception, null, 2)}`,
+            );
         } else if (exception instanceof Error) {
             // Handles all other JS/Node errors
             message = exception.message;
-            this.logger.error(`Unhandled Error: ${exception.message}`);
+            this.logger.error(
+                `Unhandled Error: ${JSON.stringify(exception, null, 2)}`,
+            );
         }
 
         const responseBody = {
