@@ -16,7 +16,7 @@ import { Job } from './entities/job.entity';
 import { JobService } from './jobs.service';
 import { CreateJobDto, ReturnJobDto, UpdateJobDto } from './dto/job.dto';
 import { AccessGuard, Actions, UseAbility } from 'nest-casl';
-import { QueryDto } from 'src/common/dto/Query.dto';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @ApiBearerAuth()
 @Controller('jobs')

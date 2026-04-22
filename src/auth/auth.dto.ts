@@ -1,5 +1,4 @@
-import { Expose } from 'node_modules/class-transformer/types';
-import { IsJWT, IsNumber, IsString } from 'node_modules/class-validator/types';
+import { IsJWT, IsNumber, IsString } from 'class-validator';
 
 export class AuthDTO {
     username: string;

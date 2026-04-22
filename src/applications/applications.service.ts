@@ -17,7 +17,7 @@ import {
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './entities/application.entity';
-import { QueryDto } from 'src/common/dto/Query.dto';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Injectable()
 export class ApplicationsService {

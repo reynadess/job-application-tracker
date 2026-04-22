@@ -11,7 +11,7 @@ import { CreateJobDto, ReturnJobDto, UpdateJobDto } from './dto/job.dto';
 import { Job } from './entities/job.entity';
 import { JobStatus } from './job-status.enum';
 import { plainToInstance } from 'class-transformer';
-import { QueryDto } from 'src/common/dto/Query.dto';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Injectable()
 export class JobService {
