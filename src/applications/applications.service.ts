@@ -143,6 +143,8 @@ export class ApplicationsService {
                 jobEntity,
                 applicationEntity,
             );
+
+            return returnApplicationDto;
         } catch (error) {
             this.logger.error('Error creating application', error);
             await queryRunner.rollbackTransaction();
@@ -152,8 +154,6 @@ export class ApplicationsService {
         } finally {
             await queryRunner.release();
         }
-
-        return returnApplicationDto;
     }
 
     async updateApplication(

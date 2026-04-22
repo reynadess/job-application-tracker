@@ -33,8 +33,8 @@ export class ApplicationsController {
     async createApplication(
         @Req() req,
         @Body() createApplicationDto: CreateApplicationDto,
-    ) {
-        await this.applicationsService.create(
+    ): Promise<ReturnApplicationDto> {
+        return await this.applicationsService.create(
             createApplicationDto,
             req.user.id,
         );

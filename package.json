@@ -14,7 +14,7 @@
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-        "test": "jest",
+        "test": "jest --detectOpenHandles",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -78,18 +78,29 @@
             "json",
             "ts"
         ],
-        "rootDir": "src",
-        "testRegex": ".*\\.spec\\.ts$",
+        "rootDir": ".",
+        "testMatch": [
+            "**/src/**/*.spec.ts",
+            "**/test/**/*.spec.ts",
+            "**/test/**/*.e2e-spec.ts"
+        ],
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
         },
         "collectCoverageFrom": [
-            "**/*.(t|j)s"
+            "src/**/*.(t|j)s"
+        ],
+        "coveragePathIgnorePatterns": [
+            "node_modules",
+            "dist",
+            "coverage",
+            "test"
         ],
         "coverageDirectory": "../coverage",
         "testEnvironment": "node",
+        "testTimeout": 30000,
         "moduleNameMapper": {
-            "^src/(.*)$": "<rootDir>/$1"
+            "^src/(.*)$": "<rootDir>/src/$1"
         }
     }
 }

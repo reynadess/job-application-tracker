@@ -1,13 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request, { Response } from 'supertest';
-import { AppModule } from '../app.module';
-import { CreateApplicantDto } from '../applicants/applicant.dto';
-import { ApplicantsService } from '../applicants/applicants.service';
-import { Repository } from 'typeorm';
+import { AppModule } from 'src/app.module';
+import { CreateApplicantDto } from 'src/applicants/applicant.dto';
+import { ApplicantsService } from 'src/applicants/applicants.service';
+import { ReturnAuthDTO } from 'src/auth/auth.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Applicant } from 'src/applicants/applicant.entity';
-import { ReturnAuthDTO } from './auth.dto';
 
 /**
  * End-to-end tests for the AuthController.
@@ -40,7 +40,7 @@ describe('AuthController (e2e)', () => {
         username: 'testuser',
         firstName: 'Test',
         lastName: 'User',
-        email: 'test@example.com',
+        email: 'test1@example.com',
         password: 'Testpass123!',
     };
 
